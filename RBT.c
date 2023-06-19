@@ -1,6 +1,3 @@
 #include "RBT.h"
 
-LR( Node**, x ){
-    int y = x.Right;
-    
-}
+Node* createNode(int value, int color, Node* parent);
