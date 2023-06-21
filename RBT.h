@@ -10,13 +10,19 @@ typedef struct Node {
     struct Node* parent;
 } Node;
 
-// Função auxiliar para criar um novo nó
-Node* createNode(int value, int color, Node* parent) {
-    Node* node = (Node*)malloc(sizeof(Node));
-    node->value = value;
-    node->color = color;
-    node->left = NULL;
-    node->right = NULL;
-    node->parent = parent;
-    return node;
-}
+// Função auxiliar para rotacionar a árvore à esquerda
+Node* createNode(int value, int color, Node* parent);
+
+Node* rotateLeft(Node* root, Node* node);
+
+Node* rotateRight(Node* root, Node* node);
+
+Node* fixTree(Node* root, Node* node);
+
+Node* insertRecursively(Node* root, Node* parent, int value);
+
+Node* insert(Node* root, int value);
+
+void printInOrder(Node* root);
+
+void freeTree(Node* root);

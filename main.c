@@ -1,16 +1,23 @@
-#include"RBT.h"
+#include"RBT.c"
 #include <stdio.h>
 #include <stdlib.h>
 
 int main() {
-    /* RedBlackTree tree;
-    tree.root = NULL;
+    Node* root = NULL;
 
-    insert(&tree, 10);
-    insert(&tree, 20);
-    insert(&tree, 30); */
+    root = insert(root, 100);
+    root = insert(root, 20);
+    root = insert(root, 30);
+    root = insert(root, 40);
+    root = insert(root, 50);
+    root = insert(root, 60);
+    root = insert(root, 70);
 
-    // Test the tree structure
+    printf("Árvore Rubro-Negra em Ordem: ");
+    printInOrder(root);
+    printf("\n");
 
+    freeTree(root);
+    
     return 0;
 }
