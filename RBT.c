@@ -62,16 +62,26 @@ void insertNode(Node *currentNode, Node *node)
     }
 }
 
-void print(Node *root)
+void prinTree(Node *root)
 {
-    if (root != NULL)
+    PrintTreeHelper(root, 0);
+}
+
+void PrintTreeHelper(Node *node, int indentLevel)
+{
+    if (node != NULL)
     {
-        print(root->left);
-        printf("%d ", root->id);
-        printf("%d ", root->color);
-        print(root->right);
+        PrintTreeHelper(node->right, indentLevel + 1);
+
+        for (int i = 0; i < indentLevel; i++)
+            printf("    ");
+        
+        printf("%d - %d\n", node->id, node->color);
+
+        PrintTreeHelper(node->left, indentLevel + 1);
     }
 }
+
 
 Node *rotateLeft(Node **root, Node *node)
 {
@@ -134,6 +144,7 @@ void fixupAfterInsertion(Node **root, Node *node)
         Node *uncleNode = uncle(node);
         Node *grandparentNode = grandparent(node);
 
+        // Caso 2: O pai e o tio do nó inserido são vermelhos
         if (uncleNode != NULL && uncleNode->color == RED)
         {
             node->color = BLACK;
@@ -143,14 +154,19 @@ void fixupAfterInsertion(Node **root, Node *node)
         }
         else
         {
+            // Caso 3: O pai é vermelho, mas o tio é preto (ou inexistente)
             if (node->left == grandparentNode->right)
             {
                 node = node->left;
                 rotateLeft(root, node);
             }
+
+            // Caso 4: O pai é vermelho e o tio é preto (ou inexistente)
             node->left->color = BLACK;
             grandparentNode->color = RED;
             rotateRight(root, grandparentNode);
         }
     }
+
+    (*root)->color = BLACK;
 }

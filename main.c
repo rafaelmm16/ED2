@@ -20,8 +20,8 @@ int main() {
                 root = insert(root, item);
                 break;
             case 2:
-                printf("Árvore em ordem: ");
-                print(root);
+                printf("Árvore em ordem: \n");
+                prinTree(root);
                 printf("\n");
                 break;
             case 0:

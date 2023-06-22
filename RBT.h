@@ -23,7 +23,9 @@ Node *insert(Node *root, int value);
 
 void insertNode(Node *currentNode, Node *node);
 
-void print(Node *root);
+void prinTree(Node *root);
+
+void PrintTreeHelper(Node *node, int indentLevel);
 
 Node *rotateLeft(Node **root, Node *node);
 
