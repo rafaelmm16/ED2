@@ -3,21 +3,36 @@
 #include <stdlib.h>
 
 int main() {
-    Node* root = NULL;
+    Node *root = NULL;
+    int choice, item;
 
-    root = insert(root, 100);
-    root = insert(root, 20);
-    root = insert(root, 30);
-    root = insert(root, 40);
-    root = insert(root, 50);
-    root = insert(root, 60);
-    root = insert(root, 70);
+    do {
+        printf("1. Inserir elemento na árvore\n");
+        printf("2. Exibir árvore em ordem\n");
+        printf("0. Sair\n");
+        printf("Escolha uma opção: ");
+        scanf("%d", &choice);
 
-    printf("Árvore Rubro-Negra em Ordem: ");
-    printInOrder(root);
-    printf("\n");
+        switch (choice) {
+            case 1:
+                printf("Digite o elemento a ser inserido: ");
+                scanf("%d", &item);
+                root = insert(root, item);
+                break;
+            case 2:
+                printf("Árvore em ordem: ");
+                print(root);
+                printf("\n");
+                break;
+            case 0:
+                printf("Encerrando...\n");
+                break;
+            default:
+                printf("Opção inválida! Tente novamente.\n");
+        }
+        printf("\n");
+    } while (choice != 0);
 
-    freeTree(root);
     
     return 0;
 }
