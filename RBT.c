@@ -3,8 +3,7 @@
 #include "RBT.h"
 
 // Função auxiliar para criar um novo nó
-Node *createNode(int id)
-{
+Node *createNode(int id){
     Node *node = (Node *)malloc(sizeof(Node));
     node->id = id;
     node->color = RED;
@@ -14,7 +13,7 @@ Node *createNode(int id)
     return node;
 }
 
-void insertNode(Node **root, Node *node) {
+void insertNode(Node **root, Node *node) { 
     if (*root == NULL) {
         node->color = BLACK;
         *root = node;
@@ -47,28 +46,25 @@ void insertNode(Node **root, Node *node) {
     fixupAfterInsertion(root, node);
 }
 
-Node *insert(Node *root, int id) {
-    Node *node = createNode(id);
+Node *insert(Node *root, int id) { //cria a estrutura do no, caso a arvore esteja vazia ele cria um NO raiz
+    Node *node = createNode(id); // chama a função de criar o NO
 
     if (root == NULL) {
         node->color = BLACK;
         return node;
     }
 
-    insertNode(&root, node);
+    insertNode(&root, node); 
 
     return root;
 }
 
-void prinTree(Node *root)
-{
+void prinTree(Node *root){
     printTreeHelper(root, 0);
 }
 
-void printTreeHelper(Node *node, int indentLevel)
-{
-    if (node != NULL)
-    {
+void printTreeHelper(Node *node, int indentLevel){
+    if (node != NULL){
         printTreeHelper(node->right, indentLevel + 1);
 
         for (int i = 0; i < indentLevel; i++)
@@ -81,26 +77,22 @@ void printTreeHelper(Node *node, int indentLevel)
 }
 
 
-Node *rotateLeft(Node **root, Node *node)
-{
+Node *rotateLeft(Node **root, Node *node){
     Node *rightChild = node->right;
     node->right = rightChild->left;
     rightChild->left = node;
-    if (*root == node)
-    {
+    if (*root == node){
         *root = rightChild;
     }
 
     return rightChild;
 }
 
-Node *rotateRight(Node **root, Node *node)
-{
+Node *rotateRight(Node **root, Node *node){
     Node *leftChild = node->left;
     node->left = leftChild->right;
     leftChild->right = node;
-    if (*root == node)
-    {
+    if (*root == node){
         *root = leftChild;
     }
 
@@ -108,41 +100,5 @@ Node *rotateRight(Node **root, Node *node)
 }
 
 void fixupAfterInsertion(Node **root, Node *node) {
-    node->color = RED;
-
-    while (node != *root && node->left != NULL && node->left->color == RED) {
-        Node* sibling = NULL;
-        Node* uncle = NULL;
-        Node* grandparent = *root;
-
-        while (grandparent->left != NULL && grandparent->left->left != node->left) {
-            grandparent = grandparent->left;
-        }
-
-        if (grandparent->left != NULL) {
-            uncle = grandparent->left->right;
-            sibling = grandparent->left;
-        } else {
-            uncle = grandparent->right->left;
-            sibling = grandparent->right;
-        }
-
-        if (uncle != NULL && uncle->color == RED) {
-            grandparent->color = RED;
-            sibling->color = BLACK;
-            uncle->color = BLACK;
-            node = grandparent;
-        } else {
-            if (node == sibling->right) {
-                node = sibling->left;
-                rotateRight(root, sibling);
-            }
-
-            node->left->color = BLACK;
-            grandparent->color = RED;
-            rotateLeft(root, grandparent);
-        }
-    }
-
-    (*root)->color = BLACK;
+    
 }
