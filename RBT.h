@@ -1,34 +1,51 @@
+#ifndef RBT_H
+#define RBT_H
+
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef enum Color
-{
-    RED,
-    BLACK
-} Color;
+#include "dados.h"
 
-// Estrutura de um nó da árvore
-typedef struct Node
-{
-    Color color; // 0 para vermelho, 1 para preto
-    struct Node *left;
-    struct Node *right;
-    int id;
-} Node;
+struct NO{
+	void *info;
+	int color;
+	struct NO *left;
+	struct NO *right;
+};
 
-// Função auxiliar para rotacionar a árvore à esquerda
-Node *createNode(int value);
+typedef struct NO *RbTree;
 
-Node *insert(Node *root, int value);
+RbTree *createRbTree();
+void freeNode(struct NO *node, void (*cb)(void *));
+void freeRbTree(RbTree *root, void (*cb)(void *));
 
-void insertNode(Node **root, Node *node);
+// Pesquisa e remoção de nós específicos
+struct NO *searchSmaller(struct NO *node);
+struct NO *removeSmaller(struct NO *node, void (*cb)(void *));
+int isInTreeRb(RbTree *node, void *key, void (*cb)(void *, void *, void *));
+struct NO *searchElement(RbTree *node, void *key, void (*cb)(void *, void *, void *));
 
-void prinTree(Node *root);
+int getColor(struct NO *node);
+void changeColor(struct NO *node);
 
-void printTreeHelper(Node *node, int indentLevel);
+// Funções para rotação
+struct NO *rotateLeftRb(struct NO *input);
+struct NO *rotateRightRb(struct NO *input);
 
-Node *rotateLeft(Node **root, Node *node);
+// Funções para correção de cor dos nós
+struct NO *moveRedToLeft(struct NO *input);
+struct NO *moveRedToRight(struct NO *input);
+struct NO *balanceNodes(struct NO *input);
 
-Node *rotateRight(Node **root, Node *node);
+// Funções para inserção
+int insertRb(RbTree *T, void *key, void (*cb)(void *, void *, void *));
+struct NO *insertNodeRb(struct NO *root, void *key, int *ans, void (*cb)(void *, void *, void *));
 
-void fixupAfterInsertion(Node **root, Node *newNode);
+// Funções para remoção
+int removeRb(RbTree *root, void *key, void (*cb)(void *, void *, void *), void (*funcDeleta)(void *), void (*funcCopy)(void *, void *));
+struct NO *removeElementRb(struct NO *root, void *key, void (*cb)(void *, void *, void *), void (*funcDeleta)(void *), void (*funcCopy)(void *, void *));
+
+//Impressão da árvore pedida
+void printRb(RbTree *root, void (*cb)(void *));
+
+#endif
