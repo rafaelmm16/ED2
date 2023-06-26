@@ -1,55 +1,62 @@
-#include "RBT.c"
-#include "dados.c"
-#include "orderedSet.c"
-
 #include <stdio.h>
 #include <stdlib.h>
 
-int main() {
-    int choice, item;
-    orderedSet *root;
-    root = createRbTree();
+#include "RBT.c"
 
-    do {
-        printf("1. Inserir elemento na árvore\n");
-        printf("2. Exibir árvore em ordem\n");
-        printf("3. Procurar um id\n");
+int main()
+{
+    int choice, item;
+    RbTree *root = createRbTree();
+
+    do
+    {
+        printf("1. Cadastrar um novo produto\n");
+        printf("2. Excluir um produto cadastrado\n");
+        printf("3. Atualizar a quantidade de um produto no estoque\n");
+        printf("4. Listar produtos cadastrados\n");
+        printf("5. Listar produtos em estoque\n");
+        printf("6. Imprimir a árvore Rubro-Negra\n");
         printf("0. Sair\n");
-        printf("Escolha uma opção: ");
+        printf("\nEscolha uma opção: ");
         scanf("%d", &choice);
 
-        switch (choice) {
-            case 1:
-                printf("Digite o elemento a ser inserido: ");
-                scanf("%d", &item);
-                if (isOnSet(root, criaNo(item), &comparar) == 1)
-					printf("O elemento ja pertence ao conjunto A!\n");
-				else
-					insertElement(root, criaNo(item), &comparar);
-                break;
-            case 2:
-                if (isEmpty(root))
-					printf("A arvore esta vazio!\n");
-				else
-				{
-					printf("Conjunto A:\n");
-					printRb(root, &imprime);
-				}
-                break;
-            case 3:
-                printf("Digite o elemento a ser inserido: ");
-                scanf("%d", &item);
-                //searchInfoRBTree(root, item);
-                break;
-            case 0:
-                printf("Encerrando...\n");
-                break;
-            default:
-                printf("Opção inválida! Tente novamente.\n");
+        switch (choice)
+        {
+        case 1:
+            printf("Digite o elemento a ser inserido: ");
+            scanf("%d", &item);
+            item = insertRb(root, item);
+            break;
+        case 2:
+            printf("Digite o elemento a ser removido: ");
+            scanf("%d", &item);
+            removeRb(root, item);
+            prinTree(root);
+            break;
+        case 3:
+            prinTree(root);
+            break;  
+        case 4:
+            printf("Digite o elemento a ser inserido: ");
+            scanf("%d", &item);
+            searchElement(root, item);
+
+            break;      
+        case 5:
+            prinTree(root);
+            break;
+        case 6:
+            prinTree(root);
+            break;
+        
+        case 0:
+            printf("Encerrando...\n");
+            break;
+        default:
+            printf("Opção inválida! Tente novamente.\n");
         }
         printf("\n");
     } while (choice != 0);
 
-    
     return 0;
 }
