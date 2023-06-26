@@ -15,7 +15,6 @@ RbTree *createRbTree()
 	return root;
 }
 
-
 // LIBERAR
 // ************
 void freeNode(struct NO *no)
@@ -58,7 +57,7 @@ int searchElement(RbTree *root, int valor)
 }
 
 // ROTACAO
-// =================================
+// ************
 struct NO* rotateLeftRb(struct NO* No1)
 {
 	struct NO* No2 = No1->right;
@@ -81,83 +80,87 @@ struct NO* rotateRightRb(struct NO* No1)
 
 // PROPRIEDADES
 // ************
-int getColor(struct NO* node)
+int getColor(struct NO *node)
 {
-	if (node == NULL)
-		return BLACK;
-	else
+	if (node)
 		return node->color;
+	else
+		return BLACK;
 }
 
-void changeColor(struct NO* node)
+void changeColor(struct NO *node)
 {
-	node->color = !node->color;
-	if (node->left != NULL)
-		node->left->color = !node->left->color;
-	if (node->right != NULL)
-		node->right->color = !node->right->color;
+	// Altera a cor de um nó e de seus filhos
+	if (node)
+	{
+		node->color = !node->color;
+		if (node->right)
+			node->right->color = !node->right->color;
+		if (node->left)
+			node->left->color = !node->left->color;
+	}
 }
-
 
 // INSERCAO
 // ************
-struct NO* insertNodeRb(struct NO* node, int valor, int *resp)
+
+
+struct NO *insertNodeRb(struct NO *H, int valor, int *resp)
 {
-	if(node == NULL){
-        struct NO *novo;
-        novo = (struct NO*)malloc(sizeof(struct NO));
-        if(novo == NULL){
-            *resp = 0;
-            return NULL;
-        }
-
-        novo->info = valor;
-        novo->color = RED;
-        novo->right = NULL;
-        novo->left = NULL;
-        *resp = 1;
-        return novo;
+	if (!H) {
+        struct NO *insert = (struct NO *)malloc(sizeof(struct NO));
+		if (!insert) { // não foi inserido
+			*resp = 0;
+			return NULL;
+		}
+		insert->info = valor;
+		insert->color = RED;
+		insert->left = insert->right = NULL;
+		*resp = 1;
+		return insert;
     }
 
-    if(valor == node->info)
-        *resp = 0;// Valor duplicado
-    else{
-        if(valor < node->info)
-            node->left = insertNodeRb(node->left,valor,resp);
+    if (valor == H->info)
+        *resp = 0; // Valor duplicado
+    else {
+        if (valor < H->info)
+            H->left = insertNodeRb(H->left, valor, resp);
         else
-            node->right = insertNodeRb(node->right,valor,resp);
+            H->right = insertNodeRb(H->right, valor, resp);
     }
 
-    //n� Vermelho � sempre filho � esquerda
-    if(getColor(node->right) == RED && getColor(node->left) == BLACK)
-        node = rotateLeftRb(node);
+    // Nó Vermelho é sempre filho à esquerda
+    if (getColor(H->right) == RED && getColor(H->left) == BLACK)
+        H = rotateLeftRb(H);
 
-    //Filho e Neto s�o vermelhos
-    //Filho vira pai de 2 n�s vermelhos
-    if(getColor(node->left) == RED && getColor(node->left->left) == RED)
-        node = rotateRightRb(node);
+    // Filho e Neto são vermelhos
+    // Filho vira pai de 2 nós vermelhos
+    if (getColor(H->left) == RED && getColor(H->left->left) == RED)
+        H = rotateRightRb(H);
 
-    //2 filhos Vermelhos: troca cor!
-    if(getColor(node->left) == RED && getColor(node->right) == RED)
-        changeColor(node);
+	if ((getColor(H->right) == RED && getColor(H->right->right) == RED) || (getColor(H->right) == RED && getColor(H->right->left) == RED))
+		changeColor(H);
+	
+    // 2 filhos Vermelhos: troca cor!
+     //if (getColor(H->left) == RED && getColor(H->right) == RED)
+         //changeColor(H);
 
-    return node;
+    return H;
 }
 
 int insertRb(RbTree *root, int valor)
 {
-	int resp;
+	int ans;
 
-	*root = insertNodeRb(*root, valor, &resp);
+	*root = insertNodeRb(*root, valor, &ans);
 	if ((*root) != NULL)
 		(*root)->color = BLACK;
 
-	return resp;
+	return ans;
 }
-
 // REMOCAOO
 // ************
-struct NO *balanceNodes(struct NO *node)
+struct NO* balanceNodes(struct NO* node)
 {
 	// n� Vermelho � sempre filho � esquerda
 	if (getColor(node->right) == RED)

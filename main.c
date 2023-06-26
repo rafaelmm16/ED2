@@ -47,6 +47,7 @@ int main()
             break;
         case 6:
             prinTree(root);
+            //printf("%d", root->info);
             break;
         
         case 0:
