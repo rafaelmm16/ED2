@@ -28,17 +28,19 @@ int main()
         case 1:
             printf("Digite o produto a ser inserido: ");
             scanf("%d", &item);
-            fflush(stdin);
             item = insertRb(root, item);
+            //fflush(stdin);
+            /* item = insertRb(root, item);
             printf("Digite o nome do produto: ");
             fgets(name, 64, stdin);
             adicionarName(*root, name);
             printf("Digite o cod do produto: ");
             scanf("%d", &cod);
             printf("Digite a qtd do produto: ");
+
             scanf("%d", &qtd);
             imprimirString(*root);
-            adicionarInformacoes(*root, cod, qtd);
+            adicionarInformacoes(*root, cod, qtd); */
 
             prinTree(root);
             break;
