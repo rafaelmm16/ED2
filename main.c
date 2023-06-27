@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "RBT.c"
 
 int main()
 {
-    int choice, item;
+    int choice, item, novo;
+    int qtd, cod;
+    char name[64];
     RbTree *root = createRbTree();
 
     do
@@ -23,23 +26,49 @@ int main()
         switch (choice)
         {
         case 1:
-            printf("Digite o elemento a ser inserido: ");
+            printf("Digite o produto a ser inserido: ");
             scanf("%d", &item);
+            fflush(stdin);
             item = insertRb(root, item);
+            printf("Digite o nome do produto: ");
+            fgets(name, 64, stdin);
+            adicionarName(*root, name);
+            printf("Digite o cod do produto: ");
+            scanf("%d", &cod);
+            printf("Digite a qtd do produto: ");
+            scanf("%d", &qtd);
+            imprimirString(*root);
+            adicionarInformacoes(*root, cod, qtd);
+
+            prinTree(root);
             break;
         case 2:
-            printf("Digite o elemento a ser removido: ");
+            printf("Digite o produto a ser removido: ");
             scanf("%d", &item);
             removeRb(root, item);
             prinTree(root);
             break;
         case 3:
-            prinTree(root);
+            printf("Digite o produto a ser atualizado: ");
+            scanf("%d", &item);
+
+            if (searchElement(*root, item))
+            {
+                printf("O produto %d existe!\n", item);
+                
+                printf("\nInforme o novo valor: ");
+                scanf("%d", &novo);
+                trocarInfo(*root, item, novo);
+
+                prinTree(root);
+            }
+            else printf("O produto não existe!\n");
+            
             break;  
         case 4:
             printf("Digite o elemento a ser inserido: ");
             scanf("%d", &item);
-            searchElement(root, item);
+            searchElement(*root, item);
 
             break;      
         case 5:

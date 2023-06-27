@@ -7,7 +7,7 @@ struct NO{
 	struct NO *left;
 	struct NO *right;
 
-	char name_prod[100];
+	char* name_prod;
 	int cod_prod;
 	int qtd_prod;
 };
@@ -18,7 +18,7 @@ RbTree *createRbTree();
 void freeRbTree(RbTree* root);
 int insertRb(RbTree* root, int valor);
 int removeRb(RbTree  *root, int valor);
-int searchElement(RbTree *root, int valor);
+//int searchElement(RbTree *root, int valor);
 int isEmpty(RbTree *root);
 int totalNodes(RbTree *root);
 int heightRb(RbTree *root);
@@ -28,3 +28,4 @@ void preOrder(RbTree *root,int H);
 
 void prinTree(RbTree *root);
 void PrintTreeHelper(RbTree *node, int indentLevel);
+void imprimirString(struct NO* no);
