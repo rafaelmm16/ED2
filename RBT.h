@@ -27,3 +27,5 @@ void printProd(RbTree *root);
 void printProdHelper(RbTree *root, int indentLevel);
 void printProdCastrados(RbTree *root);
 void printProdCastradosHelper(RbTree *oot, int indentLevel);
+void printProdEstoqueAux(RbTree *root);
+void printProdEstoque(RbTree *root, int indentLevel);

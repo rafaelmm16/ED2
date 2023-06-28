@@ -64,6 +64,8 @@ int returnQuant (struct NO * raiz, int valor, int qnt){ //retorna a quantidade a
 
 
 
+
+
 // Rotações
 struct NO *rotateLeftRb(struct NO *input){ // Rotação a esquerda
 	struct NO *aux;
@@ -398,21 +400,81 @@ void printProdHelper(RbTree *root, int indentLevel){ //impressao produto
 }
 
 
-void printProdCastrados(RbTree *root){ //auxiliar na impressao do produto
+void printProdEstoqueAux(RbTree *root){ //auxiliar na impressao do produto em estoque
+	printProdEstoque(root, 0);
+}
+
+void printProdEstoque(RbTree *root, int indentLevel){ //impressao produto em estoque
+	if (*root != NULL)	{
+		if((*root)->qtd_prod!=0 && (*root)->qtd_prod>0){
+			printf("%s : %d \n", (*root)->name_prod, (*root)->qtd_prod);
+			//printf("%d : %s  \n",(*root)->qtd_prod, (*root)->name_prod);
+		}
+		printProdEstoque(&((*root)->right), indentLevel + 1);
+		printProdEstoque(&((*root)->left), indentLevel + 1);
+	}
+}
+
+/*
+
+void printProdCastrados(RbTree *root){ //auxiliar na impressao do produtos cadastrados
 	printProdCastradosHelper(root, 0);
 }
 
-void printProdCastradosHelper(RbTree *root, int indentLevel){ //impressao produto
+void printProdCastradosHelper(RbTree *root, int indentLevel){ //impressao produtos cadastrados
 	if (*root != NULL)	{
 		printf("%d : %s  \n",(*root)->qtd_prod, (*root)->name_prod);
 		printProdCastradosHelper(&((*root)->right), indentLevel + 1);
 		printProdCastradosHelper(&((*root)->left), indentLevel + 1);
-		for (int i = 0; i < indentLevel; i++){}
-			//printf("    ");
-		
-		//printf("[ %d : %s ] \n",(*root)->qtd_prod, (*root)->name_prod); /* , (*root)->cod_prod, (*root)->qtd_prod) */
-		
+		//for (int i = 0; i < indentLevel; i++){}
+	}
+}
 
+
+struct NO *searchElement(struct NO *raiz, int valor){
+	if (raiz == NULL || raiz->info == valor){
+		return raiz; // retorna o valor encontrado ou a raiz (se for nula)
+	}
+
+	if (valor < raiz->info){ // Se o valor for menor que o valor do nó atual, realiza a busca na subárvore esquerda
+		return searchElement(raiz->left, valor);
+	}else{
+		// Se o valor for maior que o valor do nó atual, realiza a busca na subárvore direita
+		return searchElement(raiz->right, valor);
+	}
+}
+
+int returnQuant (struct NO * raiz, int valor, int qnt){ //retorna a quantidade atual do produto;
+	if (raiz == NULL || raiz->info == valor){
+		qnt= raiz->qtd_prod;
+		return qnt; // retorna a quantidade do produto atual se existir
+	}
+
+	if (valor < raiz->info){ // Se o valor for menor que o valor do nó atual, realiza a busca na subárvore esquerda
+		return returnQuant(raiz->left, valor, qnt);
+	}else{
+		// Se o valor for maior que o valor do nó atual, realiza a busca na subárvore direita
+		return returnQuant(raiz->right, valor, qnt);
+	}	
+}
+
+
+
+
+*/
+
+
+
+void printProdCastrados(RbTree *root){ //auxiliar na impressao do produtos cadastrados
+	printProdCastradosHelper(root, 0);
+}
+
+void printProdCastradosHelper(RbTree *root, int indentLevel){ //impressao produtos cadastrados
+	if (*root != NULL)	{
+		printf("%d : %s  \n",(*root)->qtd_prod, (*root)->name_prod);
+		printProdCastradosHelper(&((*root)->right), indentLevel + 1);
+		printProdCastradosHelper(&((*root)->left), indentLevel + 1);
+		//for (int i = 0; i < indentLevel; i++){}
 	}
 }
 

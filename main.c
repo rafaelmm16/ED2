@@ -57,8 +57,6 @@ int main()
             if (searchElement(*root, item_dois)) { //item é o codigo do produto
                 quant_atual = returnQuant(*root,item_dois,quant_atual);
                 printf("\n> O produto %d existe! Quantidade Atual: %d \n", item_dois, quant_atual);
-                //printf("Quantidade atual do produto: %d", quant_atual);
-                
                 printf("\nInforme o novo valor da quantidade: ");
                 scanf("%d", &novo);
                 if(novo<0){
@@ -77,17 +75,11 @@ int main()
             printProdCastrados(root);
 
             break;      
-        case 5:
-            //prinTree(root);
-            printf("Listar produtos em estoque");
-            //pegar produtos que possui mais de zero na quantidade
-            //quant
-
-
-
-
+        case 5://[ok]
+            printf("\n Produtos Disponiveis no Estoque Atualmente \n");
+            printProdEstoqueAux(root);
             break;
-        case 6:
+        case 6: //[ok]
             prinTree(root);
             break;
         
