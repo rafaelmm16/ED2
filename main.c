@@ -7,7 +7,7 @@
 int main()
 {
     int choice, item, novo;
-    int qtd, cod;
+    int qtd=0;
     char name[64];
     RbTree *root = createRbTree();
 
@@ -28,19 +28,21 @@ int main()
         case 1:
             printf("Digite o produto a ser inserido: ");
             scanf("%d", &item);
+            //insertRb(root, item);
             fflush(stdin);
-            item = insertRb(root, item);
             printf("Digite o nome do produto: ");
             fgets(name, 64, stdin);
-            adicionarName(*root, name);
-            printf("Digite o cod do produto: ");
-            scanf("%d", &cod);
+            addName(*root, name);
             printf("Digite a qtd do produto: ");
             scanf("%d", &qtd);
-            imprimirString(*root);
-            adicionarInformacoes(*root, cod, qtd);
-
-            prinTree(root);
+            //addInfo(*root, qtd); 
+            //imprimirString(*root);
+            
+            item = insertRb(root, item, qtd, name);
+            
+            printProd(root);
+            //free(name);
+            //imprimirString(*root);
             break;
         case 2:
             printf("Digite o produto a ser removido: ");
@@ -49,7 +51,7 @@ int main()
             prinTree(root);
             break;
         case 3:
-            printf("Digite o produto a ser atualizado: ");
+            printf("Digite o cod do produto a ser atualizado: ");
             scanf("%d", &item);
 
             if (searchElement(*root, item))
@@ -58,25 +60,25 @@ int main()
                 
                 printf("\nInforme o novo valor: ");
                 scanf("%d", &novo);
-                trocarInfo(*root, item, novo);
+                changeInfo(*root, item, novo);
 
-                prinTree(root);
+                printProd(root);
             }
             else printf("O produto não existe!\n");
             
             break;  
         case 4:
-            printf("Digite o elemento a ser inserido: ");
-            scanf("%d", &item);
-            searchElement(*root, item);
+            printf("Listar produtos cadastrados ");
+            //scanf("%d", &item);
+            //searchElement(*root, item);
 
             break;      
         case 5:
-            prinTree(root);
+            //prinTree(root);
+            printf("Listar produtos em estoque");
             break;
         case 6:
             prinTree(root);
-            //printf("%d", root->info);
             break;
         
         case 0:
