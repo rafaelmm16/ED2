@@ -67,12 +67,14 @@ struct NO *rotateLeftRb(struct NO *input)
 	/*  a rotação pode criar uma violação nas regras da rb,
 		outras funções são responsáveis por corrigir isso
 	*/
-	struct NO *aux = input->right;
+	struct NO *aux;
+
+	aux = input->right;
 	input->right = aux->left;
 	aux->left = input;
 	aux->color = input->color;
 	input->color = RED;
-	return aux; // retorna quem tomou o lugar de input na árvore
+	return aux;
 }
 
 struct NO *rotateRightRb(struct NO *input)
@@ -123,8 +125,6 @@ int BlackHeight(struct NO *node)
 
 struct NO *insertNodeRb(struct NO *root, int key, int *ans)
 {
-	int altura = BlackHeight(root);
-
 	if (!root)
 	{
 		struct NO *insert = (struct NO *)malloc(sizeof(struct NO));
@@ -143,45 +143,47 @@ struct NO *insertNodeRb(struct NO *root, int key, int *ans)
 		return insert;
 	}
 
+	// If the key already exists in the tree, return NULL.
 	if (key == root->info)
-		*ans = 0; // Valor duplicado
+	{
+		*ans = 0;
+		return NULL;
+	}
+
+	// If the key is less than the root's key, recursively insert the node into the left subtree.
+	if (key < root->info)
+	{
+		root->left = insertNodeRb(root->left, key, ans);
+	}
+	// Otherwise, recursively insert the node into the right subtree.
 	else
 	{
-		if (key < root->info)
-			root->left = insertNodeRb(root->left, key, ans);
-		else
-			root->right = insertNodeRb(root->right, key, ans);
+		root->right = insertNodeRb(root->right, key, ans);
 	}
 
-	printf("\n Altura Prete %d \n", altura);
-	if (altura != 0)
+	// Check if the tree is balanced after the insertion.
+	if (*ans)
 	{
-		// Nó Vermelho é sempre filho à esquerda
-		if ((root->right != NULL && getColor(root->right) == RED) && getColor(root->left) == BLACK){
+		// If the right child of the root is red, perform a left rotation.
+		if (root->right != NULL && root->right->color == RED)
+		{
 			root = rotateLeftRb(root);
-			if((root->left != NULL && getColor(root->left) == RED) && getColor(root->right) == BLACK)
-				root = rotateLeftRb(root);
 		}
-		// Filho e Neto são vermelhos
-		// Filho vira pai de 2 nós vermelhos
-		if ((root->left != NULL && getColor(root->left) == RED) && getColor(root->left->left) == RED){
+
+		// If the left child of the root is red and its left child is also red, perform a right rotation.
+		if (root->left != NULL && root->left->color == RED && root->left->left != NULL && root->left->left->color == RED)
+		{
 			root = rotateRightRb(root);
-			if((root->right != NULL && getColor(root->right) == RED) && getColor(root->right->right) == RED)
-				root = rotateRightRb(root);
 		}
-			
-	}
 
-	// o tio de 1 é rubro
-	if (getColor(root->left) == RED && getColor(root->right) == RED && getColor(root->left->left) == RED && getColor(root) == BLACK)
-	{
-		changeColor(root->left);
-		changeColor(root->right);
-		root->color = RED;
+		// If the root is red and both of its children are black, change the color of the root to black.
+		if ((root != NULL && root->color == RED 
+		&& root->left != NULL && root->left->color == BLACK 
+		&& root->right != NULL && root->right->color == BLACK))
+		{
+			root->color = BLACK;
+		}
 	}
-
-	if ((getColor(root->right) == RED && getColor(root->right->right) == RED) || (getColor(root->right) == RED && getColor(root->right->left) == RED) || (getColor(root->left) == RED && getColor(root->left->right) == RED) || (getColor(root->left) == RED && getColor(root->left->left) == RED))
-		changeColor(root);
 
 	return root;
 }
@@ -242,7 +244,7 @@ void trocarInfo(struct NO *root, int valorAntigo, int novoValor)
 
 // REMOCAOO
 // ************
-struct NO *balanceNodes(struct NO *node)
+struct NO *dellBalanceNodes(struct NO *node)
 {
 	// n� Vermelho � sempre filho � esquerda
 	if (getColor(node->right) == RED)
@@ -296,7 +298,7 @@ struct NO *removeSmaller(struct NO *node)
 		node = moveRedToLeft(node);
 
 	node->left = removeSmaller(node->left);
-	return balanceNodes(node);
+	return dellBalanceNodes(node);
 }
 
 struct NO *searchSmaller(struct NO *atual)
@@ -343,7 +345,7 @@ struct NO *removeElementRb(struct NO *node, int valor)
 		else
 			node->right = removeElementRb(node->right, valor);
 	}
-	return balanceNodes(node);
+	return dellBalanceNodes(node);
 }
 
 int removeRb(RbTree *root, int valor)
@@ -472,9 +474,15 @@ void PrintTreeHelper(RbTree *root, int indentLevel)
 
 void imprimirString(struct NO *no)
 {
-	if (no == NULL || no->name_prod == NULL)
+	if (no == NULL)
 	{
-		// Nó inválido ou string não definida
+		// Nó inválido
+		return;
+	}
+
+	if (no->name_prod == NULL)
+	{
+		// String não definida
 		return;
 	}
 

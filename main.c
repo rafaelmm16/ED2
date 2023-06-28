@@ -7,7 +7,7 @@
 int main()
 {
     int choice, item, novo;
-    int qtd, cod;
+    int qtd;
     char name[64];
     RbTree *root = createRbTree();
 
@@ -28,20 +28,17 @@ int main()
         case 1:
             printf("Digite o produto a ser inserido: ");
             scanf("%d", &item);
-            item = insertRb(root, item);
-            //fflush(stdin);
+            insertRb(root, item);
+            fflush(stdin);
             /* item = insertRb(root, item);
             printf("Digite o nome do produto: ");
             fgets(name, 64, stdin);
             adicionarName(*root, name);
-            printf("Digite o cod do produto: ");
-            scanf("%d", &cod);
             printf("Digite a qtd do produto: ");
-
             scanf("%d", &qtd);
-            imprimirString(*root);
-            adicionarInformacoes(*root, cod, qtd); */
-
+            
+            adicionarInformacoes(*root, qtd); 
+            imprimirString(*root); */
             prinTree(root);
             break;
         case 2:
@@ -54,15 +51,15 @@ int main()
             printf("Digite o produto a ser atualizado: ");
             scanf("%d", &item);
 
-            if (searchElement(*root, item))
+            if (item == 1)
             {
                 printf("O produto %d existe!\n", item);
                 
                 printf("\nInforme o novo valor: ");
                 scanf("%d", &novo);
-                trocarInfo(*root, item, novo);
+               // trocarInfo(*root, item, novo);
 
-                prinTree(root);
+                //prinTree(root);
             }
             else printf("O produto não existe!\n");
             
@@ -70,14 +67,14 @@ int main()
         case 4:
             printf("Digite o elemento a ser inserido: ");
             scanf("%d", &item);
-            searchElement(*root, item);
+            //searchElement(*root, item);
 
             break;      
         case 5:
-            prinTree(root);
+            //prinTree(root);
             break;
         case 6:
-            prinTree(root);
+            //prinTree(root);
             //printf("%d", root->info);
             break;
         
