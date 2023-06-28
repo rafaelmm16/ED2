@@ -8,74 +8,84 @@ int main()
 {
     int choice, item, novo;
     int qtd=0;
-    char name[64];
+    char name[100];
+    char *name_prod = NULL;
     RbTree *root = createRbTree();
+    int item_dois=0;
+    int quant_atual=0;
 
     do
     {
-        printf("1. Cadastrar um novo produto\n");
+        printf("\n --------------------------------------------- \n1. Cadastrar um novo produto\n");
         printf("2. Excluir um produto cadastrado\n");
         printf("3. Atualizar a quantidade de um produto no estoque\n");
         printf("4. Listar produtos cadastrados\n");
         printf("5. Listar produtos em estoque\n");
         printf("6. Imprimir a árvore Rubro-Negra\n");
-        printf("0. Sair\n");
+        printf("0. Sair\n --------------------------------------------- \n");
         printf("\nEscolha uma opção: ");
         scanf("%d", &choice);
 
         switch (choice)
         {
-        case 1:
-            printf("Digite o produto a ser inserido: ");
+        case 1: //[ok]
+            printf("Digite o codigo produto a ser inserido: ");
             scanf("%d", &item);
-            //insertRb(root, item);
-            fflush(stdin);
-            printf("Digite o nome do produto: ");
-            fgets(name, 64, stdin);
-            addName(*root, name);
-            printf("Digite a qtd do produto: ");
-            scanf("%d", &qtd);
-            //addInfo(*root, qtd); 
-            //imprimirString(*root);
+            if (item<0){
+                printf("\n Número inserido invalido \n");
+            }else{
+                fflush(stdin);
+                printf("Digite o nome do produto (sem espaços): ");
+                scanf(" %99[^\n]", name);
+                printf("Digite a qtd do produto: ");
+                scanf("%d", &qtd);
+                item = insertRb(root, item, qtd, name, &name_prod);      
+                printf("\n");
+                printProd(root);
+            }
             
-            item = insertRb(root, item, qtd, name);
-            
-            printProd(root);
-            //free(name);
-            //imprimirString(*root);
             break;
-        case 2:
+        case 2: //[verificar]
             printf("Digite o produto a ser removido: ");
             scanf("%d", &item);
             removeRb(root, item);
             prinTree(root);
             break;
-        case 3:
-            printf("Digite o cod do produto a ser atualizado: ");
-            scanf("%d", &item);
-
-            if (searchElement(*root, item))
-            {
-                printf("O produto %d existe!\n", item);
+        case 3: //[ok]
+            printf("Digite o codigo do produto a ser atualizado: ");
+            scanf("%d", &item_dois);
+            if (searchElement(*root, item_dois)) { //item é o codigo do produto
+                quant_atual = returnQuant(*root,item_dois,quant_atual);
+                printf("\n> O produto %d existe! Quantidade Atual: %d \n", item_dois, quant_atual);
+                //printf("Quantidade atual do produto: %d", quant_atual);
                 
-                printf("\nInforme o novo valor: ");
+                printf("\nInforme o novo valor da quantidade: ");
                 scanf("%d", &novo);
-                changeInfo(*root, item, novo);
+                if(novo<0){
+                    printf("Numero inserido invalido;\n");                    
+                }else{
+                    changeInfo(*root, item_dois, novo);
+                    printProd(root);
+                }
 
-                printProd(root);
-            }
-            else printf("O produto não existe!\n");
+            }else 
+                printf("O produto não existe!\n");
             
             break;  
-        case 4:
-            printf("Listar produtos cadastrados ");
-            //scanf("%d", &item);
-            //searchElement(*root, item);
+        case 4: //[ok];
+            printf("\n");
+            printProdCastrados(root);
 
             break;      
         case 5:
             //prinTree(root);
             printf("Listar produtos em estoque");
+            //pegar produtos que possui mais de zero na quantidade
+            //quant
+
+
+
+
             break;
         case 6:
             prinTree(root);

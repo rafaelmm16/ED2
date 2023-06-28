@@ -33,6 +33,7 @@ void freeRbTree(RbTree *root){ //Liberar a árvore
 }
 
 
+
 // Encontrar Elemento - Busca
 struct NO *searchElement(struct NO *raiz, int valor){
 	if (raiz == NULL || raiz->info == valor){
@@ -47,24 +48,40 @@ struct NO *searchElement(struct NO *raiz, int valor){
 	}
 }
 
+int returnQuant (struct NO * raiz, int valor, int qnt){ //retorna a quantidade atual do produto;
+	if (raiz == NULL || raiz->info == valor){
+		qnt= raiz->qtd_prod;
+		return qnt; // retorna a quantidade do produto atual se existir
+	}
 
-// Rotações
-struct NO *rotateLeftRb(struct NO *No1){ // Rotação a esquerda
-	struct NO *No2 = No1->right;
-	No1->right = No2->left;
-	No2->left = No1;
-	No2->color = No1->color;
-	No1->color = RED;
-	return No2;
+	if (valor < raiz->info){ // Se o valor for menor que o valor do nó atual, realiza a busca na subárvore esquerda
+		return returnQuant(raiz->left, valor, qnt);
+	}else{
+		// Se o valor for maior que o valor do nó atual, realiza a busca na subárvore direita
+		return returnQuant(raiz->right, valor, qnt);
+	}	
 }
 
-struct NO *rotateRightRb(struct NO *No1){ // Rotação a Direita
-	struct NO *No2 = No1->left;
-	No1->left = No2->right;
-	No2->right = No1;
-	No2->color = No1->color;
-	No1->color = RED;
-	return No2;
+
+
+// Rotações
+struct NO *rotateLeftRb(struct NO *input){ // Rotação a esquerda
+	struct NO *aux;
+	aux = input->right;
+	input->right = aux->left;
+	aux->left = input;
+	aux->color = input->color;
+	input->color = RED;
+	return aux;
+}
+
+struct NO *rotateRightRb(struct NO *input){// Rotação a Direita
+	struct NO *aux = input->left;
+	input->left = aux->right;
+	aux->right = input;
+	aux->color = input->color;
+	input->color = RED;
+	return aux;
 }
 
 // Informações do No
@@ -73,11 +90,6 @@ int getColor(struct NO *node){ //pegar o cor do NO
 		return node->color;
 	else
 		return BLACK; // NULL
-}
-
-void changeNodeColor (struct NO *node){ //Altera a cor de um nó
-	if(node!=NULL)
-		node->color = !node->color;
 }
 
 void changeColor(struct NO *node){ // Altera a cor de um nó e de seus filhos	
@@ -112,280 +124,79 @@ struct NO *insertNodeRb(struct NO *root, int key, int qtd, const char *name, int
 		insert->info = key;
 		insert->color = RED;
 		insert->left = insert->right = NULL;
-		insert->name_prod = name;
-		//insert->cod_prod = 0;
 		insert->qtd_prod = qtd;
-		*ans = 1;
-		return insert;
+		// Adicionar o nome do produto
+        insert->name_prod = (char *)malloc((strlen(name) + 1) * sizeof(char));
+        strcpy(insert->name_prod, name);
+        
+        insert->qtd_prod = qtd;
+        *ans = 1;
+        return insert;
 	}
 	
-	if (key == root->info){  // Valor duplicado inserido
-		printf("Valor inserido Inválido.\n");
+	// If the key already exists in the tree, return NULL.
+	if (key == root->info){
 		*ans = 0;
-	}else{
-		if (key < root->info)
-			root->left = insertNodeRb(root->left, key, qtd,name, ans);
-		else
-			root->right = insertNodeRb(root->right, key, qtd,name, ans);
+		return NULL;
 	}
 
-	//printf("\n Altura Preta %d \n", altura);
-	
-/* 	//dois Rubros seguidos/ sequencia
-	if(root->right=!NULL){
-		if ((getColor(root->right) == RED && getColor(root->right->right) == RED) || (getColor(root->right) == RED && getColor(root->right->left) == RED){
-			changeColor(root);
-		}
-			
+	// If the key is less than the root's key, recursively insert the node into the left subtree.
+	if (key < root->info){
+		root->left = insertNodeRb(root->left, key, qtd,name, ans);
+	}
+	// Otherwise, recursively insert the node into the right subtree.
+	else{
+		root->right = insertNodeRb(root->right, key, qtd,name, ans);
 	}
 
-	if(root->left!=NULL){
-		if((getColor(root->left) == RED && getColor(root->left->right) == RED) || (getColor(root->left) == RED && getColor(root->left->left) == RED))){
-			changeColor(root);
-		}
-	}
-	
-	if(root!=NULL && root->color==RED){
-		if(root->right!=NULL){
-			if ((getColor(root->right) == RED && getColor(root->right->right) == RED) || (getColor(root->right) == RED && getColor(root->right->left) == RED)){
-				changeColor(root);
-			}
-				
+	// Check if the tree is balanced after the insertion.
+	if (*ans){
+		// If the right child of the root is red, perform a left rotation.
+		if (root->right != NULL && root->right->color == RED){
+			root = rotateLeftRb(root);
 		}
 
-		if(root->left!=NULL){
-			if((getColor(root->left) == RED && getColor(root->left->right) == RED) || (getColor(root->left) == RED && getColor(root->left->left) == RED)){
-				changeColor(root);
-			}
-		}
-	}
-
-	// If the root is red and both of its children are black, change the color of the root to black.
-	
-	if (root != NULL && root->color == RED){
-		if(root->left != NULL && root->left->color == BLACK && root->right != NULL && root->right->color == BLACK){
-			root->color=BLACK;
-		}
-
-	}
-
-	//dois vermelhos seguidos 
-	if (root != NULL && root->color == RED){
-		if(root->left != NULL && root->left->color == RED || root->right != NULL && root->right->color == RED){
-			root->color==BLACK;
-			//changeColor(root);
-
-		}
-	}
-
-
-
-
-
-	if (root != NULL && root->color == BLACK){
-		if(root->left != NULL && root->left->color == RED && root->right != NULL && root->right->color == RED){
-			changeColor(root);
-		}
-	}  */
-
-	//dois Rubros seguidos/ sequencia
-	if ((getColor(root->right) == RED && getColor(root->right->right) == RED && (root->right)!=NULL && (root->right->right)!=NULL) 
-	|| (getColor(root->right) == RED && getColor(root->right->left) == RED && (root->right)!=NULL && (root->right->left)!=NULL)
-	|| (getColor(root->left) == RED && getColor(root->left->right) == RED && (root->left)!=NULL && (root->left->right) !=NULL)
-	|| (getColor(root->left) == RED && getColor(root->left->left) == RED && (root->left)!=NULL && (root->left->left) !=NULL))
-		changeColor(root);
-
-
-	//o tio de 1 é rubro
-	if (getColor(root->left) == RED && getColor(root->right) == RED && getColor(root->left->left) == RED && getColor(root) == BLACK){
-		changeColor(root); // muda a cor da root e de seus filhos;
-		root->color = RED;
-		//changeColor(root->left);
-		//changeColor(root->right);	
-	}
-	
-	//Condições para as rotações
-	if ((root->left != NULL && getColor(root) == BLACK && getColor(root->left) == RED &&  root->left->right!=NULL && getColor(root->left->right) == RED)
-		|| (root->right != NULL && getColor(root) == BLACK && getColor(root->right) == RED && root->right->left!=NULL && getColor(root->right->left) == RED))
-		{
-			printf("rodou direita");
+		// If the left child of the root is red and its left child is also red, perform a right rotation.
+		if (root->left != NULL && root->left->color == RED && root->left->left != NULL && root->left->left->color == RED){
 			root = rotateRightRb(root);
 		}
-		if ((root->left != NULL && getColor(root) == BLACK && getColor(root->left) == RED && root->left->left!=NULL && getColor(root->left->left) == RED)
-		|| (root->right != NULL && getColor(root) == BLACK && getColor(root->right) == RED && root->right->left!=NULL && getColor(root->right->left) == RED))
-		{
-			printf("rodou esquerda");
-			root = rotateLeftRb(root);
-			//roda pra esquerda e troca as cores
-	}
-	
-	//inserir o no e ir verificando os casos 
 
-	/*
-
-																root (AVO)
-						root->left (PAI)														root->right (TIO)
-root->left->left (Filho Esq)		root->left->right (Filho Dir)		root->right->left (sobrinho Esq)		root->right->right (sobrinho Dir)
-
-
-															root (AVO)
-						root->left (TIO)														root->right (PAI)
-root->left->left (sobrinho Esq)		root->left->right (sobrinho Dir)		root->right->left (Filho Esq)		root->right->right (Filho Dir)
-
-
-	*/
-	//Caso 1: o tio de q é Rubro. 
-	/*if (getColor(root->right) == RED){ //tio da direita RED
-		changeColor(root);
-		//changeNodeColor(root->right); //muda cor do tio e do pai
-		//changeNodeColor(root->left); 
-	}
-	if (getColor(root->left) == RED){ //tio da esquerda RED **
-		changeColor(root);
-		//changeNodeColor(root->right); //muda cor do tio e do pai
-		//changeNodeColor(root->left); 
-	} 
-
-	//caso 2: O tio de q é Negro e q é filho a direita de seu pai //tio: root->right // q: root->left->right
-	if(getColor(root->right) ==BLACK && (root->left->right)!=NULL ){ //tio da direita é BLACK
-		if((root->left->right->right ==NULL) && (root->left->right->left ==NULL)){ //verificando de (root->left->right) é uma folha
-			root->left->right = rotateRightRb(root->left->right); //rotação para esquerda no novo no
-		}
-		//se nao: nao roda
-	}
-	//caso 2: O tio de q é Negro e q é filho a direita de seu pai //tio: root->left  // q: root->right->right
-	if(getColor(root->left) ==BLACK && (root->right->right)!=NULL ){ //tio da esquerda é BLACK ** //tio: root->left // q: root->right->right
-		if((root->right->right->right ==NULL) && (root->right->right->left ==NULL)){ //verificando de (root->right->right) é uma folha
-			root->right->right = rotateRightRb(root->right->right); //rotação para esquerda no novo no
-		}
-	} 
-
-
-	//Caso 3: o tio de q é Negro e q é é filho a esquerda de seu pai. //tio: root->right e Q:root->left->left
-	if(getColor(root->right) ==BLACK && (root->left->left)!=NULL){ //tio da direita é BLACK
-		if((root->left->left->right ==NULL) && (root->left->left->left ==NULL)){ 
-			root->left->left = rotateLeftRb(root->left->left); 
+		// If the root is red and both of its children are black, change the color of the root to black.
+		if ((root != NULL && root->color == RED 
+		&& root->left != NULL && root->left->color == BLACK 
+		&& root->right != NULL && root->right->color == BLACK)){
+			root->color = BLACK;
 		}
 	}
-	//Caso 3: o tio de q é Negro e q é é filho a esquerda de seu pai. //tio: root->left e Q: root->right->left 
-	if(getColor(root->left ) ==BLACK && (root->right->left)!=NULL){ //tio da esquerda é BLACK
-		if((root->right->left->right ==NULL) && (root->right->left->left ==NULL)){ 
-			root->right->left = rotateLeftRb(root->right->left); 
-		}
-	}
-
-
-	if(getColor(root)==BLACK && getColor(root->left)==RED && getColor(root->left->left)==RED){
-		changeColor(root->left);
-		changeColor(root->right);
-	}
-	if(getColor(root)==BLACK && getColor(root->left)==RED && getColor(root->left->right)==RED){
-		changeColor(root->left);
-		changeColor(root->right);
-	}
-	if (getColor(root)==BLACK && getColor(root->right)==RED && getColor(root->right->left)==RED){
-		changeColor(root->left);
-		changeColor(root->right);
-	}
-	if (getColor(root)==BLACK && getColor(root->right)==RED && getColor(root->right->right)==RED){
-		changeColor(root->left);
-		changeColor(root->right);
-	}*/
-
-
-	/*
-
-	if (altura != 0){
-
-
-		printf("entrou aq ----");
-		//printf("entrou aq");
-		//root = rotateRightRb(root);
-		//printf("entrou na direita");
-
-		//caso 2
-		if( getColor(root->right)==BLACK && root->left->right!=NULL){
-			
-			//root = rotateRightRb(root);
-		}
-		//CASO 3
-		if(getColor(root->right)==BLACK && root->right->left!=NULL){
-			//root=rotateLeftRb(root);
-		}
-
-		if ((root->left != NULL && getColor(root) == BLACK && getColor(root->left) == RED && getColor(root->left->right) == RED)
-		|| (root->right != NULL && getColor(root) == BLACK && getColor(root->right) == RED && getColor(root->right->left) == RED))
-		{
-			printf("Rodou esquerda");
-			root = rotateLeftRb(root);
-			//root = rotateRightRb(root);
-		}
-		if ((root->left != NULL && getColor(root) == BLACK && getColor(root->left) == RED && getColor(root->left->left) == RED)
-		|| (root->right != NULL && getColor(root) == BLACK && getColor(root->right) == RED && getColor(root->right->left) == RED))
-		{
-			printf("Rodou Direita");
-			root = rotateRightRb(root);
-			//root = rotateLeftRb(root);
-		}
-		
-		// Nó Vermelho é sempre filho à esquerda
-		// if ((root->right != NULL && getColor(root->right) == RED) && getColor(root->left) == BLACK)
-			//root = rotateLeftRb(root); 
-
-		// Filho e Neto são vermelhos
-		// Filho vira pai de 2 nós vermelhos
-		// if ((root->left != NULL && getColor(root->left) == RED) && getColor(root->left->left) == RED)
-			//root = rotateRightRb(root); 
-	}*/
-
-	//altura do no atual = filho;
-	//altura do no pai = altura - 2;
 
 	return root;
 }
-/*
-int insertRb(RbTree *root, int valor){ //insere o no na arvore
-	int ans;
-	*root = insertNodeRb(*root, valor, &ans);//faz o tratamento das possiveis violações da árvore rubro negra
-	if ((*root) != NULL) //seta a cor da raiz para preta se diferente;
-		(*root)->color = BLACK;
-	return ans;
 
+int insertRb(RbTree *root, int valor, int qtd, const char *name, char **name_prod) {
+    int ans;
+
+    free(*name_prod); // Libera a memória anterior, se necessário
+    *name_prod = (char *)malloc((strlen(name) + 1) * sizeof(char)); // Aloca memória suficiente para a nova string
+    
+    int i = 0;
+    while (name[i] != '\0') {
+        if (name[i] == ' ') {
+            (*name_prod)[i] = '\0';
+            break;
+        }
+        (*name_prod)[i] = name[i];
+        i++;
+    }
+    
+    *root = insertNodeRb(*root, valor, qtd, *name_prod, &ans); // Faz o tratamento das possíveis violações da árvore rubro-negra
+
+    if ((*root) != NULL) // Seta a cor da raiz para preta, se necessário
+        (*root)->color = BLACK;
+
+    return ans;
 }
 
-*/
-
-int insertRb(RbTree *root, int valor, int qtd, const char *name){ //insere o no na arvore
-	//valor = chave da arvore = codigo do produto
-	//qtd = quantidade do produto
-	int ans;
-
-	//free(root->name_prod); // Libera a memória anterior, se necessário
-	//root->name_prod = (char *)malloc((strlen(name) + 1) * sizeof(char)); // Aloca memória suficiente para a nova string
-
-
-	*root = insertNodeRb(*root, valor, qtd, name, &ans);//faz o tratamento das possiveis violações da árvore rubro negra
-	//valor =0;
-	qtd =0;
-	free(name);
-	name = (char *)malloc((strlen(name) + 1) * sizeof(char)); // Aloca memória suficiente para a nova string
-	
-	
-	if ((*root) != NULL) //seta a cor da raiz para preta se diferente;
-		(*root)->color = BLACK;
-	return ans;
-
-}
-
-void addInfo(struct NO *no,int qtd) { //adicionar informações sobre o produto: quantidade
-	if (no == NULL)	{ // Nó inválido
-		return;
-	}
-	//no->cod_prod = cod;
-	no->qtd_prod = qtd;
-}
-
-void addName(struct NO *no, const char *name){ //adicionar informações sobre o produto: nome
+void addName(struct NO *no, const char *name){ //adicionar informações sobre o produto: nome [verificar]
 	if (no == NULL)	{// Nó inválido
 		return;
 	}
@@ -397,14 +208,12 @@ void addName(struct NO *no, const char *name){ //adicionar informações sobre o
 	strcpy(no->name_prod, name);
 }
 
-void changeInfo(struct NO *root, int valorAntigo, int novoValor){
+void changeInfo(struct NO *root, int valorAntigo, int novoValor){ //muda a quantidade do produto
 	struct NO *no = searchElement(root, valorAntigo);
-
-	if (no == NULL)	{
-		// Nó não encontrado
+	if (no == NULL)	{ // Nó não encontrado
 		return;
 	}
-	no->info = novoValor;
+	no->qtd_prod = novoValor;
 }
 
 
@@ -522,10 +331,8 @@ int removeRb(RbTree *root, int valor)
 		return 0;
 }
 
-// PROPRIEDADES ARVORE
-// ************
-int isEmpty(RbTree *root)
-{
+// árvore
+int isEmpty(RbTree *root){ // verifica se esta vazia
 	if (root == NULL)
 		return 1;
 	if (*root == NULL)
@@ -533,8 +340,7 @@ int isEmpty(RbTree *root)
 	return 0;
 }
 
-int totalNodes(RbTree *root)
-{
+int totalNodes(RbTree *root){ //total de nos da arvore
 	if (root == NULL)
 		return 0;
 	if (*root == NULL)
@@ -545,8 +351,7 @@ int totalNodes(RbTree *root)
 	return (alt_esq + alt_dir + 1);
 }
 
-int heightRb(RbTree *root)
-{
+int heightRb(RbTree *root){ //altura da arvore rubro negra
 	if (root == NULL)
 		return 0;
 	if (*root == NULL)
@@ -559,69 +364,13 @@ int heightRb(RbTree *root)
 		return (alt_dir + 1);
 }
 
-// PERCURSO
-// ************
-void posOrder(RbTree *root, int H)
-{
-	if (root == NULL)
-		return;
 
-	if (*root != NULL)
-	{
-		posOrder(&((*root)->left), H + 1);
-		posOrder(&((*root)->right), H + 1);
-
-		if ((*root)->color == RED)
-			printf("%d  Vermelho: H(%d) \n", (*root)->info, H);
-		else
-			printf("%d  Preto: H(%d) \n", (*root)->info, H);
-	}
+void prinTree(RbTree *root){ //auxiliar da impressao da arvore rubro negra
+	printTreeHelper(root, 0); 
 }
 
-void inOrder(RbTree *root, int H)
-{
-	if (root == NULL)
-		return;
-
-	if (*root != NULL)
-	{
-		inOrder(&((*root)->left), H + 1);
-
-		if ((*root)->color == RED)
-			printf("%dR: H(%d) \n", (*root)->info, H);
-		else
-			printf("%dB: H(%d) \n", (*root)->info, H);
-
-		inOrder(&((*root)->right), H + 1);
-	}
-}
-
-void preOrder(RbTree *root, int H)
-{
-	if (root == NULL)
-		return;
-
-	if (*root != NULL)
-	{
-		if ((*root)->color == RED)
-			printf("%d  Vermelho: H(%d) \n", (*root)->info, H);
-		else
-			printf("%d  Preto: H(%d) \n", (*root)->info, H);
-
-		preOrder(&((*root)->left), H + 1);
-		preOrder(&((*root)->right), H + 1);
-	}
-}
-//impressao arvore rubro negra
-void prinTree(RbTree *root)
-{
-	printTreeHelper(root, 0);
-}
-
-void printTreeHelper(RbTree *root, int indentLevel)
-{
-	if (*root != NULL)
-	{
+void printTreeHelper(RbTree *root, int indentLevel){ //impressao arvore rubro negra
+	if (*root != NULL)	{
 		printTreeHelper(&((*root)->right), indentLevel + 1);
 
 		for (int i = 0; i < indentLevel; i++)
@@ -632,16 +381,12 @@ void printTreeHelper(RbTree *root, int indentLevel)
 	}
 }
 
-//impressao produto
-void printProd(RbTree *root)
-{
+void printProd(RbTree *root){ //auxiliar na impressao do produto
 	printProdHelper(root, 0);
 }
 
-void printProdHelper(RbTree *root, int indentLevel)
-{
-	if (*root != NULL)
-	{
+void printProdHelper(RbTree *root, int indentLevel){ //impressao produto
+	if (*root != NULL)	{
 		printProdHelper(&((*root)->right), indentLevel + 1);
 
 		for (int i = 0; i < indentLevel; i++)
@@ -652,13 +397,29 @@ void printProdHelper(RbTree *root, int indentLevel)
 	}
 }
 
-void imprimirString(struct NO *no)
-{
-	if (no == NULL || no->name_prod == NULL)
-	{
-		// Nó inválido ou string não definida
+
+void printProdCastrados(RbTree *root){ //auxiliar na impressao do produto
+	printProdCastradosHelper(root, 0);
+}
+
+void printProdCastradosHelper(RbTree *root, int indentLevel){ //impressao produto
+	if (*root != NULL)	{
+		printf("%d : %s  \n",(*root)->qtd_prod, (*root)->name_prod);
+		printProdCastradosHelper(&((*root)->right), indentLevel + 1);
+		printProdCastradosHelper(&((*root)->left), indentLevel + 1);
+		for (int i = 0; i < indentLevel; i++){}
+			//printf("    ");
+		
+		//printf("[ %d : %s ] \n",(*root)->qtd_prod, (*root)->name_prod); /* , (*root)->cod_prod, (*root)->qtd_prod) */
+		
+
+	}
+}
+
+void imprimirString(struct NO *no){
+	if (no == NULL || no->name_prod == NULL){ // Nó inválido ou string não definida
+		
 		return;
 	}
-
 	printf("Nome do Produto: %s\n", no->name_prod);
 }
