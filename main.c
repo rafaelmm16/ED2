@@ -6,8 +6,9 @@
 
 int main()
 {
-    int choice, item, novo;
+    int choice, novo;
     int qtd=0;
+    int item =0;
     char name[100];
     char *name_prod = NULL;
     RbTree *root = createRbTree();
@@ -29,19 +30,27 @@ int main()
         switch (choice)
         {
         case 1: //[ok]
+            item =0;
             printf("Digite o codigo produto a ser inserido: ");
             scanf("%d", &item);
-            if (item<0){
-                printf("\n Número inserido invalido \n");
+            if (item<=0){
+                printf("\n Codigo invalido \n");
+            }else if (searchElement(*root, item)){ //codigo inserido já existe
+                printf("\n Já possui um produto cadastrado com essa chave, tente outra chave \n");
             }else{
                 fflush(stdin);
                 printf("Digite o nome do produto (sem espaços): ");
                 scanf(" %99[^\n]", name);
                 printf("Digite a qtd do produto: ");
                 scanf("%d", &qtd);
-                item = insertRb(root, item, qtd, name, &name_prod);      
-                printf("\n");
-                printProd(root);
+                if(item<0){
+                    printf("\n - quantidade inválida - \n");
+                }else{
+                    item = insertRb(root, item, qtd, name, &name_prod);      
+                    printf("\n");
+                    printProd(root);
+                }
+                
             }
             
             break;
