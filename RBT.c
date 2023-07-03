@@ -8,8 +8,7 @@
 #define BLACK 0
 
 // Função auxiliar para criar um novo nó
-RbTree *createRbTree()
-{
+RbTree *createRbTree(){
 	RbTree *root = (RbTree *)malloc(sizeof(RbTree));
 	if (root != NULL)
 	{
@@ -18,10 +17,7 @@ RbTree *createRbTree()
 	return root;
 }
 
-// LIBERAR
-// ************
-void freeNode(struct NO *no)
-{
+void freeNode(struct NO *no){
 	if (no == NULL)
 		return;
 	freeNode(no->left);
@@ -30,8 +26,7 @@ void freeNode(struct NO *no)
 	no = NULL;
 }
 
-void freeRbTree(RbTree *root)
-{
+void freeRbTree(RbTree *root){
 	if (root == NULL)
 		return;
 	freeNode(*root);
@@ -40,33 +35,24 @@ void freeRbTree(RbTree *root)
 
 // CONSULTA ARVORE
 // ************
-struct NO *searchElement(struct NO *raiz, int valor)
-{
-	if (raiz == NULL || raiz->info == valor)
-	{
+struct NO *searchElement(struct NO *raiz, int valor){
+	if (raiz == NULL || raiz->info == valor){
 		// Retorna a raiz se for nula ou se o valor correspondente for encontrado
 		return raiz;
 	}
 
-	if (valor < raiz->info)
-	{
+	if (valor < raiz->info){
 		// Se o valor for menor que o valor do nó atual, realiza a busca na subárvore esquerda
 		return searchElement(raiz->left, valor);
 	}
-	else
-	{
+	else{
 		// Se o valor for maior que o valor do nó atual, realiza a busca na subárvore direita
 		return searchElement(raiz->right, valor);
 	}
 }
 
-// ROTACAO
-// ************
-struct NO *rotateLeftRb(struct NO *input)
-{
-	/*  a rotação pode criar uma violação nas regras da rb,
-		outras funções são responsáveis por corrigir isso
-	*/
+// Rotações
+struct NO *rotateLeftRb(struct NO *input){
 	struct NO *aux;
 
 	aux = input->right;
@@ -77,9 +63,9 @@ struct NO *rotateLeftRb(struct NO *input)
 	return aux;
 }
 
-struct NO *rotateRightRb(struct NO *input)
-{
+struct NO *rotateRightRb(struct NO *input){
 	struct NO *aux = input->left;
+
 	input->left = aux->right;
 	aux->right = input;
 	aux->color = input->color;
@@ -87,18 +73,15 @@ struct NO *rotateRightRb(struct NO *input)
 	return aux;
 }
 
-// PROPRIEDADES
-// ************
-int getColor(struct NO *node)
-{
+// Informações do No
+int getColor(struct NO *node){
 	if (node)
 		return node->color;
 	else
 		return BLACK;
 }
 
-void changeColor(struct NO *node)
-{
+void changeColor(struct NO *node){
 	// Altera a cor de um nó e de seus filhos
 	node->color = !node->color;
 	if (node->left != NULL)
@@ -123,26 +106,27 @@ int BlackHeight(struct NO *node)
     return leftBlackHeight - rightBlackHeight + currentBlackHeight;
 }
 
-struct NO *insertNodeRb(struct NO *root, int key, int *ans)
-{
-	if (!root)
-	{
+struct NO *insertNodeRb(struct NO *root, int key, int qtd, const char *name, int *ans){
+	//int altura = BlackHeight(root);
+	if (!root){
 		struct NO *insert = (struct NO *)malloc(sizeof(struct NO));
-		if (!insert)
-		{ // não foi inserido
+		if (!insert){ // não foi inserido
 			*ans = 0;
 			return NULL;
 		}
 		insert->info = key;
 		insert->color = RED;
 		insert->left = insert->right = NULL;
-		insert->name_prod = NULL;
-		insert->cod_prod = 0;
-		insert->qtd_prod = 0;
-		*ans = 1;
-		return insert;
+		insert->qtd_prod = qtd;
+		// Adicionar o nome do produto
+        insert->name_prod = (char *)malloc((strlen(name) + 1) * sizeof(char));
+        strcpy(insert->name_prod, name);
+        
+        insert->qtd_prod = qtd;
+        *ans = 1;
+        return insert;
 	}
-
+	
 	// If the key already exists in the tree, return NULL.
 	if (key == root->info)
 	{
@@ -153,12 +137,12 @@ struct NO *insertNodeRb(struct NO *root, int key, int *ans)
 	// If the key is less than the root's key, recursively insert the node into the left subtree.
 	if (key < root->info)
 	{
-		root->left = insertNodeRb(root->left, key, ans);
+		root->left = insertNodeRb(root->left, key, qtd,name, ans);
 	}
 	// Otherwise, recursively insert the node into the right subtree.
 	else
 	{
-		root->right = insertNodeRb(root->right, key, ans);
+		root->right = insertNodeRb(root->right, key, qtd,name, ans);
 	}
 
 	// Check if the tree is balanced after the insertion.
@@ -188,18 +172,33 @@ struct NO *insertNodeRb(struct NO *root, int key, int *ans)
 	return root;
 }
 
-int insertRb(RbTree *root, int valor)
-{
-	int ans;
+int insertRb(RbTree *root, int valor, int qtd, const char *name, char **name_prod) {
+    int ans;
 
-	*root = insertNodeRb(*root, valor, &ans);
-	if ((*root) != NULL)
-		(*root)->color = BLACK;
+    free(*name_prod); // Libera a memória anterior, se necessário
+    *name_prod = (char *)malloc((strlen(name) + 1) * sizeof(char)); // Aloca memória suficiente para a nova string
+    
+    int i = 0;
+    while (name[i] != '\0') {
+        if (name[i] == ' ') {
+            (*name_prod)[i] = '\0';
+            break;
+        }
+        (*name_prod)[i] = name[i];
+        i++;
+    }
+    
+    *root = insertNodeRb(*root, valor, qtd, *name_prod, &ans); // Faz o tratamento das possíveis violações da árvore rubro-negra
 
-	return ans;
+    if ((*root) != NULL) // Seta a cor da raiz para preta, se necessário
+        (*root)->color = BLACK;
+
+    return ans;
 }
 
-void adicionarInformacoes(struct NO *no, int cod, int qtd)
+
+
+void adicionarQuantidade(struct NO *no, int key, int quantidade)
 {
 	if (no == NULL)
 	{
@@ -207,51 +206,62 @@ void adicionarInformacoes(struct NO *no, int cod, int qtd)
 		return;
 	}
 
-	no->cod_prod = cod;
+	// Procura o nó com a chave especificada
+	while (no != NULL && key != no->info)
+	{
+		if (key < no->info)
+		{
+			no = no->left;
+		}
+		else
+		{
+			no = no->right;
+		}
+	}
+
+	// Se o nó existir, adiciona a quantidade ao nó correspondente
+	if (no != NULL && key == no->info)
+	{
+		no->qtd_prod += quantidade;
+	}
+}
+
+void addInfo(struct NO *no,int qtd) { //adicionar informações sobre o produto: quantidade
+	if (no == NULL)	{ // Nó inválido
+		return;
+	}
+	//no->cod_prod = cod;
 	no->qtd_prod = qtd;
 }
 
-void adicionarName(struct NO *no, const char *name)
-{
-	if (no == NULL)
-	{
-		// Nó inválido
+void addName(struct NO *no, const char *name){ //adicionar informações sobre o produto: nome
+	if (no == NULL)	{// Nó inválido
 		return;
 	}
-
-	// Libera a memória anterior, se necessário
-	free(no->name_prod);
-
-	// Aloca memória suficiente para a nova string
-	no->name_prod = (char *)malloc((strlen(name) + 1) * sizeof(char));
+	
+	free(no->name_prod); // Libera a memória anterior, se necessário
+	no->name_prod = (char *)malloc((strlen(name) + 1) * sizeof(char)); // Aloca memória suficiente para a nova string
 
 	// Copia a nova string para o campo infoString
 	strcpy(no->name_prod, name);
 }
 
-void trocarInfo(struct NO *root, int valorAntigo, int novoValor)
-{
+void changeInfo(struct NO *root, int valorAntigo, int novoValor){
 	struct NO *no = searchElement(root, valorAntigo);
 
-	if (no == NULL)
-	{
+	if (no == NULL)	{
 		// Nó não encontrado
 		return;
 	}
-
-	no->info = novoValor;
+	no->qtd_prod = novoValor;
 }
 
-// REMOCAOO
-// ************
-struct NO *dellBalanceNodes(struct NO *node)
-{
-	// n� Vermelho � sempre filho � esquerda
-	if (getColor(node->right) == RED)
-		node = rotateLeftRb(node);
 
-	// Filho da direita e neto da esquerda s�o vermelhos
-	// if(node->left != NULL && getColor(node->right) == RED && getColor(node->left->left) == RED)
+// Remoção
+struct NO *balanceNodes(struct NO *node){
+	
+	if (getColor(node->right) == RED) // no Vermelho sempre filho a esquerda
+		node = rotateLeftRb(node);
 
 	// Filho da esquerda e neto da esquerda s�o vermelhos
 	if (node->left != NULL && getColor(node->left) == RED && getColor(node->left->left) == RED)
@@ -264,11 +274,9 @@ struct NO *dellBalanceNodes(struct NO *node)
 	return node;
 }
 
-struct NO *moveRedToLeft(struct NO *node)
-{
+struct NO *moveRedToLeft(struct NO *node){
 	changeColor(node);
-	if (getColor(node->right->left) == RED)
-	{
+	if (getColor(node->right->left) == RED){
 		node->right = rotateRightRb(node->right);
 		node = rotateLeftRb(node);
 		changeColor(node);
@@ -276,11 +284,9 @@ struct NO *moveRedToLeft(struct NO *node)
 	return node;
 }
 
-struct NO *moveRedToRight(struct NO *node)
-{
+struct NO *moveRedToRight(struct NO *node){
 	changeColor(node);
-	if (getColor(node->left->left) == RED)
-	{
+	if (getColor(node->left->left) == RED){
 		node = rotateRightRb(node);
 		changeColor(node);
 	}
@@ -298,7 +304,7 @@ struct NO *removeSmaller(struct NO *node)
 		node = moveRedToLeft(node);
 
 	node->left = removeSmaller(node->left);
-	return dellBalanceNodes(node);
+	return balanceNodes(node);
 }
 
 struct NO *searchSmaller(struct NO *atual)
@@ -345,7 +351,7 @@ struct NO *removeElementRb(struct NO *node, int valor)
 		else
 			node->right = removeElementRb(node->right, valor);
 	}
-	return dellBalanceNodes(node);
+	return balanceNodes(node);
 }
 
 int removeRb(RbTree *root, int valor)
@@ -398,91 +404,51 @@ int heightRb(RbTree *root)
 	else
 		return (alt_dir + 1);
 }
-
-// PERCURSO
-// ************
-void posOrder(RbTree *root, int H)
-{
-	if (root == NULL)
-		return;
-
-	if (*root != NULL)
-	{
-		posOrder(&((*root)->left), H + 1);
-		posOrder(&((*root)->right), H + 1);
-
-		if ((*root)->color == RED)
-			printf("%d  Vermelho: H(%d) \n", (*root)->info, H);
-		else
-			printf("%d  Preto: H(%d) \n", (*root)->info, H);
-	}
-}
-
-void inOrder(RbTree *root, int H)
-{
-	if (root == NULL)
-		return;
-
-	if (*root != NULL)
-	{
-		inOrder(&((*root)->left), H + 1);
-
-		if ((*root)->color == RED)
-			printf("%dR: H(%d) \n", (*root)->info, H);
-		else
-			printf("%dB: H(%d) \n", (*root)->info, H);
-
-		inOrder(&((*root)->right), H + 1);
-	}
-}
-
-void preOrder(RbTree *root, int H)
-{
-	if (root == NULL)
-		return;
-
-	if (*root != NULL)
-	{
-		if ((*root)->color == RED)
-			printf("%d  Vermelho: H(%d) \n", (*root)->info, H);
-		else
-			printf("%d  Preto: H(%d) \n", (*root)->info, H);
-
-		preOrder(&((*root)->left), H + 1);
-		preOrder(&((*root)->right), H + 1);
-	}
-}
-
+//impressao arvore rubro negra
 void prinTree(RbTree *root)
 {
-	PrintTreeHelper(root, 0);
+	printTreeHelper(root, 0);
 }
 
-void PrintTreeHelper(RbTree *root, int indentLevel)
+void printTreeHelper(RbTree *root, int indentLevel)
 {
 	if (*root != NULL)
 	{
-		PrintTreeHelper(&((*root)->right), indentLevel + 1);
+		printTreeHelper(&((*root)->right), indentLevel + 1);
 
 		for (int i = 0; i < indentLevel; i++)
 			printf("    ");
 
-		printf("%d - %d\n", (*root)->info, (*root)->color); /* , (*root)->cod_prod, (*root)->qtd_prod) */
-		PrintTreeHelper(&((*root)->left), indentLevel + 1);
+		printf("%d (%d)\n", (*root)->info, (*root)->color); /* , (*root)->cod_prod, (*root)->qtd_prod) */
+		printTreeHelper(&((*root)->left), indentLevel + 1);
+	}
+}
+
+//impressao produto
+void printProd(RbTree *root)
+{
+	printProdHelper(root, 0);
+}
+
+void printProdHelper(RbTree *root, int indentLevel)
+{
+	if (*root != NULL)
+	{
+		printProdHelper(&((*root)->right), indentLevel + 1);
+
+		for (int i = 0; i < indentLevel; i++)
+			printf("    ");
+
+		printf("%d (%d) - [ %s: %d ] \n", (*root)->info, (*root)->color, (*root)->name_prod,(*root)->qtd_prod); /* , (*root)->cod_prod, (*root)->qtd_prod) */
+		printProdHelper(&((*root)->left), indentLevel + 1);
 	}
 }
 
 void imprimirString(struct NO *no)
 {
-	if (no == NULL)
+	if (no == NULL || no->name_prod == NULL)
 	{
-		// Nó inválido
-		return;
-	}
-
-	if (no->name_prod == NULL)
-	{
-		// String não definida
+		// Nó inválido ou string não definida
 		return;
 	}
 
