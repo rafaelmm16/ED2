@@ -14,7 +14,7 @@ typedef struct NO *RbTree;
 
 RbTree *createRbTree();
 void freeRbTree(RbTree* root);
-int insertRb(RbTree *root, int valor);
+int insertRb(RbTree *root, int valor, int quant, char* name);
 int removeRb(RbTree  *root, int valor);
 //int searchElement(RbTree *root, int valor);
 int isEmpty(RbTree *root);

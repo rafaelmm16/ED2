@@ -122,7 +122,7 @@ struct NO* rotateLeftRb(struct NO* root) {
 
 // INSERÇÃO
 // ************
-struct NO* insertNodeRb(struct NO* root, int key, int* ans) {
+struct NO* insertNodeRb(struct NO* root, int key, int quant, char* name, int* ans) {
     if (!root) {
         struct NO* insert = (struct NO*)malloc(sizeof(struct NO));
         if (!insert) {
@@ -133,9 +133,9 @@ struct NO* insertNodeRb(struct NO* root, int key, int* ans) {
         insert->info = key;
         insert->color = RED;
         insert->left = insert->right = NULL;
-        insert->name_prod = NULL;
+        insert->name_prod = name;
         //insert->cod_prod = 0;
-        insert->qtd_prod = 0;
+        insert->qtd_prod = quant;
 
         *ans = 1;
         return insert;
@@ -148,7 +148,7 @@ struct NO* insertNodeRb(struct NO* root, int key, int* ans) {
 
     if (key < root->info) {
         // Navegue para a subárvore esquerda
-        root->left = insertNodeRb(root->left, key, ans);
+        root->left = insertNodeRb(root->left, key,quant, name, ans);
 
         // Verifique as propriedades da árvore vermelho-preto e faça as rotações e alterações de cor necessárias
         if (root->left && getColor(root->left) == RED && getColor(root->left->left) == RED) {
@@ -180,7 +180,7 @@ struct NO* insertNodeRb(struct NO* root, int key, int* ans) {
         }
     } else {
         // Navegue para a subárvore direita
-        root->right = insertNodeRb(root->right, key, ans);
+        root->right = insertNodeRb(root->right, key, quant, name, ans);
 
         // Verifique as propriedades da árvore vermelho-preto e faça as rotações e alterações de cor necessárias
         if (root->right && getColor(root->right) == RED && getColor(root->right->right) == RED) {
@@ -215,10 +215,11 @@ struct NO* insertNodeRb(struct NO* root, int key, int* ans) {
     return root;
 }
 
-int insertRb(RbTree* root, int valor) {
+int insertRb(RbTree* root, int valor, int quant, char* name) {
     int ans;
 
-    *root = insertNodeRb(*root, valor, &ans);
+    *root = insertNodeRb(*root, valor, quant, name, &ans);
+	free(*name);
     if ((*root) != NULL)
         (*root)->color = BLACK;
 
@@ -493,7 +494,7 @@ void printTreeHelper(RbTree *root, int indentLevel)
 		for (int i = 0; i < indentLevel; i++)
 			printf("    ");
 
-		printf("%d - %d\n", (*root)->info, (*root)->color); // , (*root)->cod_prod, (*root)->qtd_prod)
+		printf("%d(%d) - [%d: %s]\n", (*root)->info, (*root)->color, (*root)->qtd_prod, (*root)->name_prod); // , (*root)->cod_prod, (*root)->qtd_prod)
 		printTreeHelper(&((*root)->left), indentLevel + 1);
 	}
 } 

@@ -7,8 +7,8 @@
 int main()
 {
     int choice, item;
-    //int qtd;
-    //char name[64];
+    int quant=0;
+    char name[64];
     RbTree *root = createRbTree();
 
     do
@@ -24,9 +24,13 @@ int main()
         case 1:
             printf("Chave: ");
             scanf("%d", &item);
-            insertRb(root, item);
+            printf("Quantidade: ");
+            scanf("%d", &quant);
+            printf("Nome: ");
+            scanf("%s", &name);
+            insertRb(root, item, quant, name);
             prinTree(root);
-            break;;
+            break;
         case 2:
             prinTree(root);
             //printf("%d", root->info);
