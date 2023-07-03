@@ -168,7 +168,7 @@ struct NO *insertNodeRb(struct NO *root, int key, int qtd, const char *name, int
 	if (key < root->info) {
 		root->left = insertNodeRb(root->left, key, qtd,name,ans);
 	}else{
-		root->right = insertNodeRb(root->left, key, qtd,name,ans);
+		root->right = insertNodeRb(root->right, key, qtd,name,ans);
 	}
 
 	if (*ans){ // Check if the tree is balanced after the insertion.

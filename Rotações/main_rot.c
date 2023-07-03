@@ -8,7 +8,8 @@ int main()
 {
     int choice, item;
     int quant=0;
-    char name[64];
+    char name[100];
+    char *name_prod = NULL;
     RbTree *root = createRbTree();
 
     do
@@ -26,9 +27,10 @@ int main()
             scanf("%d", &item);
             printf("Quantidade: ");
             scanf("%d", &quant);
-            printf("Nome: ");
-            scanf("%s", &name);
-            insertRb(root, item, quant, name);
+            fflush(stdin);
+            printf("Nome do produto (sem espaços): ");
+            scanf(" %99[^\n]", name);
+            insertRb(root, item, quant, name, &name_prod);
             prinTree(root);
             break;
         case 2:

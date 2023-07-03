@@ -122,10 +122,10 @@ struct NO* rotateLeftRb(struct NO* root) {
 
 // INSERÇÃO
 // ************
-struct NO* insertNodeRb(struct NO* root, int key, int quant, char* name, int* ans) {
+struct NO* insertNodeRb(struct NO* root, int key, int quant, const char *name, int* ans) {
     if (!root) {
         struct NO* insert = (struct NO*)malloc(sizeof(struct NO));
-        if (!insert) {
+        if (!insert) { // não foi inserido
             *ans = 0;
             return NULL;
         }
@@ -133,9 +133,13 @@ struct NO* insertNodeRb(struct NO* root, int key, int quant, char* name, int* an
         insert->info = key;
         insert->color = RED;
         insert->left = insert->right = NULL;
-        insert->name_prod = name;
+        //insert->name_prod = name;
         //insert->cod_prod = 0;
         insert->qtd_prod = quant;
+
+		// Adicionar o nome do produto
+        insert->name_prod = (char *)malloc((strlen(name) + 1) * sizeof(char));
+        strcpy(insert->name_prod, name);
 
         *ans = 1;
         return insert;
@@ -143,7 +147,7 @@ struct NO* insertNodeRb(struct NO* root, int key, int quant, char* name, int* an
 
     if (key == root->info) {
         *ans = 0;
-        return root;
+        return NULL;
     }
 
     if (key < root->info) {
@@ -215,11 +219,26 @@ struct NO* insertNodeRb(struct NO* root, int key, int quant, char* name, int* an
     return root;
 }
 
-int insertRb(RbTree* root, int valor, int quant, char* name) {
+int insertRb(RbTree* root, int valor, int quant, const char *name, char **name_prod) {
     int ans;
 
-    *root = insertNodeRb(*root, valor, quant, name, &ans);
-	free(*name);
+	free(*name_prod); // Libera a memória anterior, se necessário
+    *name_prod = (char *)malloc((strlen(name) + 1) * sizeof(char)); // Aloca memória suficiente para a nova string
+
+	int i = 0;
+	//tratamento de inserção de um tipo char/ string
+    while (name[i] != '\0') {
+        if (name[i] == ' ') {
+            (*name_prod)[i] = '\0';
+            break;
+        }
+        (*name_prod)[i] = name[i];
+        i++;
+    }
+
+
+    *root = insertNodeRb(*root, valor, quant, *name_prod, &ans);
+	//free(*name);
     if ((*root) != NULL)
         (*root)->color = BLACK;
 
