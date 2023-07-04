@@ -1,0 +1,8 @@
+//codições
+quando o usuario digita um numero invalido, menor que um
+quando o usuario digita um numero que ja existe
+
+quando pede pra imprimir arvore, e estiver vazia;
+	avisar que não possui arvore
+
+
