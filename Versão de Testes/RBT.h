@@ -22,10 +22,7 @@ int removeRb(RbTree  *root, int valor);
 int isEmpty(RbTree *root);
 int totalNodes(RbTree *root);
 int heightRb(RbTree *root);
-void inOrder(RbTree *root, int H);
-void posOrder(RbTree *root, int H);
-void preOrder(RbTree *root,int H);
 
 void prinTree(RbTree *root);
-void PrintTreeHelper(RbTree *node, int indentLevel);
+void PrintTreeHelper(RbTree *root, int indentLevel);
 void imprimirString(struct NO* no);

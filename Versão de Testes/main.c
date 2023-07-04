@@ -44,7 +44,7 @@ int main()
         case 2:
             printf("Digite o produto a ser removido: ");
             scanf("%d", &item);
-            removeElementRb(*root, item);
+            removeRb(root, item);
             prinTree(root);
             break;
         case 3:
