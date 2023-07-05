@@ -353,7 +353,7 @@ struct NO *removeElementRb(struct NO *root, int valor){
         printf("Removi.\n");
         return NULL;
     }
-   
+
 
     if (valor < root->info)
     {
@@ -461,31 +461,22 @@ void prinTree(RbTree *root)
     PrintTreeHelper(root, 0);
 }
 
-void PrintTreeHelper(RbTree *root, int indentLevel)
-{
-    if (root == NULL)
-    {
+void PrintTreeHelper(RbTree *root, int indentLevel){
+    if (root == NULL){
         // Árvore vazia, não há nada para imprimir
         printf("Árvore vazia.\n");
         //return;
     }
-    if (*root == NULL)
-    {
+    if (*root == NULL){
         return;
     }
     
-
     RbTree currentNode = *root;
-
     PrintTreeHelper(&(currentNode->right), indentLevel + 1);
-
-    for (int i = 0; i < indentLevel; i++)
-    {
+    for (int i = 0; i < indentLevel; i++){
         printf("    ");
     }
-
-    if (currentNode != NULL)
-    {
+    if (currentNode != NULL){
         printf("%d - %d\n", currentNode->info, getColor(currentNode)); // Acessar cor do nó por getColor(currentNode)
         
         PrintTreeHelper(&(currentNode->left), indentLevel + 1);

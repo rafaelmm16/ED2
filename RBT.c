@@ -559,19 +559,44 @@ int removeRb(RbTree *root, int valor){
 
 
 void prinTree(RbTree *root){ //auxiliar da impressao da arvore rubro negra
+	
+	if (root == NULL){
+        //
+        printf("Árvore vazia.\n");
+        return;
+    }
 	printTreeHelper(root, 0); 
 }
 
 void printTreeHelper(RbTree *root, int indentLevel){ //impressao arvore rubro negra
-	if (*root != NULL){
+/* 	if (*root != NULL){
 		printTreeHelper(&((*root)->right), indentLevel + 1);
 
 		for (int i = 0; i < indentLevel; i++)
 			printf("    ");
 
-		printf("%d (%d)\n", (*root)->info, (*root)->color); /* , (*root)->cod_prod, (*root)->qtd_prod) */
+		printf("%d (%d)\n", (*root)->info, (*root)->color);
 		printTreeHelper(&((*root)->left), indentLevel + 1);
-	}
+	} */
+	if (root == NULL){
+        // Árvore vazia, não há nada para imprimir
+        printf("Árvore vazia.\n");
+        //return;
+    }
+    if (*root == NULL){
+        return;
+    }
+    
+    RbTree currentNode = *root;
+    PrintTreeHelper(&(currentNode->right), indentLevel + 1);
+    for (int i = 0; i < indentLevel; i++){
+        printf("    ");
+    }
+    if (currentNode != NULL){
+        printf("%d - %d\n", currentNode->info, getColor(currentNode)); // Acessar cor do nó por getColor(currentNode)
+        
+        PrintTreeHelper(&(currentNode->left), indentLevel + 1);
+    }
 }
 
 void printProd(RbTree *root){ //auxiliar na impressao do produto
