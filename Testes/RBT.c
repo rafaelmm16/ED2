@@ -352,15 +352,15 @@ struct NO *searchSmaller(struct NO *atual)
 
 struct NO *removeElementRb(struct NO *root, int valor)
 {
-    if (root == NULL){
-         printf("Removi.\n");
+    if (root == NULL)
+    {
+        printf("Removi.\n");
         return NULL;
     }
-   
 
     if (valor < root->info)
     {
-        if (root->left != NULL && getColor(root->left) == BLACK && root->left->left != NULL && getColor(root->left->left) == BLACK)
+        if (root->left != NULL && getColor(root->left) == BLACK && (root->left->left != NULL && getColor(root->left->left) == BLACK || root->left->right != NULL && getColor(root->left->right) == BLACK))
         {
             printf("Movendo vermelho para a esquerda.\n");
             root = moveRedToLeft(root);
@@ -368,6 +368,15 @@ struct NO *removeElementRb(struct NO *root, int valor)
 
         printf("Descendo para a subárvore esquerda.\n");
         root->left = removeElementRb(root->left, valor);
+
+        // Realiza as rotações e ajusta as cores após a remoção
+        if (root->right != NULL && getColor(root->right) == RED)
+        {
+            printf("Rotacionando à esquerda.\n");
+            root = rotateLeftRb(root);
+            changeColor(root);
+            changeColor(root->right);
+        }
     }
     else if (valor > root->info)
     {
@@ -377,7 +386,7 @@ struct NO *removeElementRb(struct NO *root, int valor)
             root = rotateRightRb(root);
         }
 
-        if (root->right != NULL && getColor(root->right) == BLACK && root->right->left != NULL && getColor(root->right->left) == BLACK)
+        if (root->right != NULL && getColor(root->right) == BLACK && (root->right->left != NULL && getColor(root->right->left) == BLACK || root->right->right != NULL && getColor(root->right->right) == BLACK))
         {
             printf("Movendo vermelho para a direita.\n");
             root = moveRedToRight(root);
@@ -385,10 +394,19 @@ struct NO *removeElementRb(struct NO *root, int valor)
 
         printf("Descendo para a subárvore direita.\n");
         root->right = removeElementRb(root->right, valor);
+
+        // Realiza as rotações e ajusta as cores após a remoção
+        if (root->right != NULL && getColor(root->right) == RED && (root->right->left != NULL && getColor(root->right->left) == RED || root->right->right != NULL && getColor(root->right->right) == RED))
+        {
+            printf("Rotacionando à esquerda.\n");
+            root = rotateLeftRb(root);
+            changeColor(root);
+            changeColor(root->right);
+        }
     }
-    else // Caso em que o valor é igual ao valor do nó atual
+    else // Valor igual ao valor do nó atual
     {
-        if (root != NULL && root->left == NULL && root->right == NULL) // Nó folha
+        if (root->left == NULL && root->right == NULL) // Nó folha
         {
             printf("Removendo nó folha.\n");
             free(root);
@@ -411,25 +429,29 @@ struct NO *removeElementRb(struct NO *root, int valor)
         else // Nó com dois filhos
         {
             printf("Removendo nó com dois filhos.\n");
-            struct NO *minValueNode = searchSmaller(root->right); // Encontra o menor valor na subárvore direita
-            root->info = minValueNode->info;                    // Copia o valor do menor nó para o nó atual
+            struct NO *minValueNode = searchSmaller(root->right);           // Encontra o menor valor na subárvore direita
+            root->info = minValueNode->info;                                // Copia o valor do menor nó para o nó atual
             root->right = removeElementRb(root->right, minValueNode->info); // Remove o menor nó recursivamente da subárvore direita
+
+            // Realiza as rotações e ajusta as cores após a remoção
+            if (root->left != NULL && getColor(root->left) == RED && (root->left->left != NULL && getColor(root->left->left) == RED || root->left->right != NULL && getColor(root->left->right) == RED))
+            {
+                printf("Rotacionando à direita depois da remoção do nó folha à esquerda.\n");
+                root = rotateRightRb(root);
+                changeColor(root);
+                changeColor(root->left);
+            }
+
+            if (root->right != NULL && getColor(root->right) == RED && (root->right->left != NULL && getColor(root->right->left) == RED || root->right->right != NULL && getColor(root->right->right) == RED))
+            {
+                printf("Rotacionando à esquerda.\n");
+                root = rotateLeftRb(root);
+                changeColor(root);
+                changeColor(root->right);
+            }
         }
     }
-
-    if (root->left != NULL && getColor(root->left) == RED && root->left->left != NULL && getColor(root->left->left) == RED)
-    {
-        printf("Rotacionando à direita.\n");
-        root = rotateRightRb(root);
-    }
-
-    if (root->right != NULL && getColor(root->right) == RED && root->right->right != NULL && getColor(root->right->right) == RED)
-    {
-        printf("Rotacionando à esquerda.\n");
-        root = rotateLeftRb(root);
-    }
-
-    return root;
+    return root; // Retorna a nova raiz após as operações
 }
 
 int removeRb(RbTree *root, int valor)
@@ -437,14 +459,15 @@ int removeRb(RbTree *root, int valor)
     printf("Chamando searchElement\n"); // Verifica se a função é chamada
     if (searchElement(*root, valor))
     {
-        printf("Entrou no if\n"); // Verifica se entra no if
+        printf("Entrou no if\n");              // Verifica se entra no if
         *root = removeElementRb(*root, valor); // Atualiza o ponteiro raiz após a remoção
-        printf("\n\nEntrou.\n");
+        printf("Entrou.\n");
         if (*root != NULL)
             (*root)->color = BLACK; // Define a cor da nova raiz como preta
         return 1;
     }
-    else{
+    else
+    {
         printf("Entrou no else\n"); // Verifica se entra no else
         return 0;
     }
@@ -471,13 +494,12 @@ void PrintTreeHelper(RbTree *root, int indentLevel)
     {
         // Árvore vazia, não há nada para imprimir
         printf("Árvore vazia.\n");
-        //return;
+        // return;
     }
     if (*root == NULL)
     {
         return;
     }
-    
 
     RbTree currentNode = *root;
 
@@ -491,7 +513,7 @@ void PrintTreeHelper(RbTree *root, int indentLevel)
     if (currentNode != NULL)
     {
         printf("%d - %d\n", currentNode->info, getColor(currentNode)); // Acessar cor do nó por getColor(currentNode)
-        
+
         PrintTreeHelper(&(currentNode->left), indentLevel + 1);
     }
 }
