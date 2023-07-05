@@ -305,8 +305,8 @@ struct NO *dellBalanceNodes(struct NO *node)
         node = rotateLeftRb(node);
 
     // O filho direito e o neto à esquerda são vermelhos
-    if (node->left != NULL && getColor(node->left->left) == RED)
-        node = rotateRightRb(node);
+    if (node->left != NULL && getColor(node->left) == RED && getColor(node->left->left) == RED)
+		node = rotateRightRb(node);
 
     // 2 filhos Vermelhos: troca cor!
     if (node->left != NULL && node->right != NULL && getColor(node->left) == RED && getColor(node->right) == RED)
@@ -338,14 +338,16 @@ struct NO *moveRedToRight(struct NO *node)
     return node;
 }
 
-struct NO* searchSmaller(struct NO* node)
+struct NO *searchSmaller(struct NO *atual)
 {
-    struct NO* current = node;
-
-    while (current && current->left != NULL)
-        current = current->left;
-
-    return current;
+    struct NO *no1 = atual;
+    struct NO *no2 = atual->left;
+    while (no2 != NULL)
+    {
+        no1 = no2;
+        no2 = no2->left;
+    }
+    return no1;
 }
 
 struct NO *removeSmaller(struct NO *node)
@@ -364,23 +366,37 @@ struct NO *removeSmaller(struct NO *node)
 
 struct NO* removeElementRb(struct NO* node, int valor)
 {
-    if (node == NULL)
-        return NULL;
+    printf("Entrou na função removeElementRb\n");
 
     if (valor < node->info)
     {
+        printf("O valor %d é menor do que o valor do nó atual\n", valor);
+
         if (getColor(node->left) == BLACK && getColor(node->left->left) == BLACK)
             node = moveRedToLeft(node);
 
         node->left = removeElementRb(node->left, valor);
     }
-    else
+    else if (valor > node->info)
     {
+        printf("O valor %d é maior do que o valor do nó atual\n", valor);
+
         if (getColor(node->left) == RED)
             node = rotateRightRb(node);
 
-        if (valor == node->info && node->left == NULL && node->right == NULL)
+        if (getColor(node->right) == BLACK && getColor(node->right->left) == BLACK)
+            node = moveRedToRight(node);
+
+        node->right = removeElementRb(node->right, valor);
+    }
+    else // valor == node->info
+    {
+        printf("O valor %d é igual ao valor do nó atual\n", valor);
+
+        if (valor == node->info && node->left == NULL && node->right == NULL) // Verifica se é uma folha
         {
+            printf("O nó atual é uma folha, removendo o nó\n");
+
             free(node);
             return NULL;
         }
@@ -390,24 +406,51 @@ struct NO* removeElementRb(struct NO* node, int valor)
 
         if (valor == node->info)
         {
-            struct NO *x = searchSmaller(node->right);
-            node->info = x->info;
-            node->right = removeElementRb(node->right, x->info); // Remover o valor x->info em vez de valor
+            printf("Substituindo o valor do nó atual pelo menor elemento da subárvore direita\n");
+
+            if (node->right != NULL)
+            {
+                struct NO *x = searchSmaller(node->right);
+                node->info = x->info;
+                node->right = removeElementRb(node->right, x->info);
+            }
+            else if (node->left != NULL)
+            {
+                printf("O nó atual não tem filho direito, substituindo pelo menor elemento da subárvore esquerda\n");
+                
+                struct NO *x = searchSmaller(node->left);
+                node->info = x->info;
+                node->left = removeElementRb(node->left, x->info);
+            }
+            else
+            {
+                printf("O nó atual não tem filhos, removendo o nó\n");
+                
+                free(node);
+                return NULL;
+            }
         }
-        else
-            node->right = removeElementRb(node->right, valor);
     }
+
+    if (node == NULL) // Verifica se o nó atual é NULL
+    {
+        printf("O nó atual é NULL\n");
+        return NULL;
+    }
+
+    printf("Executando dellBalanceNodes para ajustar o balanceamento do nó\n");
+
     return dellBalanceNodes(node); // Ajusta o balanceamento do nó após a remoção
 }
 
 int removeRb(RbTree *root, int valor)
 {
-    printf("Chamando searchElement\n"); // Verifica se a função é chamada
+    //printf("Chamando searchElement\n"); // Verifica se a função é chamada
     if (searchElement(*root, valor))
     {
-        printf("Entrou no if\n");              // Verifica se entra no if
+        //printf("Entrou no if\n");              // Verifica se entra no if
         *root = removeElementRb(*root, valor); // Atualiza o ponteiro raiz após a remoção
-        printf("Entrou.\n");
+        //printf("Entrou.\n");
         if (*root != NULL)
             (*root)->color = BLACK; // Define a cor da nova raiz como preta
         return 1;
