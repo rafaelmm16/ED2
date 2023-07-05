@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "RBT.h"
+#include "rbt-name.h"
 
 #define RED 1
 #define BLACK 0
@@ -190,13 +190,15 @@ struct NO *insertNodeRb(struct NO *root, int key, int qtd, const char *name, int
 					root->right->color = RED;
 					root->color = BLACK;
 				}
-			}else if (root->left && getColor(root->left) == RED && getColor(root->left->right) == RED) {
+			}
+			else if (root->left && getColor(root->left) == RED && getColor(root->left->right) == RED) {
 				// Caso 1: pai e tio vermelhos
 				if (root->right && getColor(root->right) == RED) {
 					root->color = RED;
 					root->left->color = BLACK;
 					root->right->color = BLACK;
-				}else {
+				}
+				else {
 					root->left = rotateLeftRb(root->left);
 					root = rotateRightRb(root);
 					root->color = BLACK;
@@ -242,7 +244,7 @@ struct NO *insertNodeRb(struct NO *root, int key, int qtd, const char *name, int
 }
 
 int insertRb(RbTree *root, int valor, int qtd, const char *name, char **name_prod) {
-	int ans;
+    int ans;
 
     free(*name_prod); // Libera a memória anterior, se necessário
     *name_prod = (char *)malloc((strlen(name) + 1) * sizeof(char)); // Aloca memória suficiente para a nova string
@@ -327,7 +329,8 @@ struct NO *moveRedToRight(struct NO *node){
 	return node;
 }
 
-struct NO *removeSmaller(struct NO *node){
+struct NO *removeSmaller(struct NO *node)
+{
 	if (node->left == NULL){
 		free(node);
 		return NULL;
@@ -342,7 +345,8 @@ struct NO *removeSmaller(struct NO *node){
 struct NO *searchSmaller(struct NO *atual){
 	struct NO *no1 = atual;
 	struct NO *no2 = atual->left;
-	while (no2 != NULL){
+	while (no2 != NULL)
+	{
 		no1 = no2;
 		no2 = no2->left;
 	}
