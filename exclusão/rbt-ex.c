@@ -40,10 +40,8 @@ void freeRbTree(RbTree *root)
 
 // CONSULTA ARVORE
 // ************
-struct NO *searchElement(struct NO *raiz, int valor)
-{
-    if (raiz == NULL || raiz->info == valor)
-    {
+struct NO *searchElement(struct NO *raiz, int valor){
+    if (raiz == NULL || raiz->info == valor) {
         // Retorna a raiz se for nula ou se o valor correspondente for encontrado
         return raiz;
     }
@@ -350,10 +348,9 @@ struct NO *searchSmaller(struct NO *atual)
     return no1;
 }
 
-struct NO *removeElementRb(struct NO *root, int valor)
-{
+struct NO *removeElementRb(struct NO *root, int valor){
     if (root == NULL){
-         printf("Removi.\n");
+        printf("Removi.\n");
         return NULL;
     }
    
@@ -435,8 +432,7 @@ struct NO *removeElementRb(struct NO *root, int valor)
 int removeRb(RbTree *root, int valor)
 {
     printf("Chamando searchElement\n"); // Verifica se a função é chamada
-    if (searchElement(*root, valor))
-    {
+    if (searchElement(*root, valor)){
         printf("Entrou no if\n"); // Verifica se entra no if
         *root = removeElementRb(*root, valor); // Atualiza o ponteiro raiz após a remoção
         printf("\n\nEntrou.\n");
