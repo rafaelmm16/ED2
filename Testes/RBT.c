@@ -309,7 +309,7 @@ struct NO *dellBalanceNodes(struct NO *node)
         node = rotateRightRb(node);
 
     // 2 filhos Vermelhos: troca cor!
-    if (getColor(node->left) == RED && getColor(node->right) == RED)
+    if (node->left != NULL && node->right != NULL && getColor(node->left) == RED && getColor(node->right) == RED)
         changeColor(node);
 
     return node;
@@ -338,16 +338,14 @@ struct NO *moveRedToRight(struct NO *node)
     return node;
 }
 
-struct NO *searchSmaller(struct NO *atual)
+struct NO* searchSmaller(struct NO* node)
 {
-    struct NO *no1 = atual;
-    struct NO *no2 = atual->left;
-    while (no2 != NULL)
-    {
-        no1 = no2;
-        no2 = no2->left;
-    }
-    return no1;
+    struct NO* current = node;
+
+    while (current && current->left != NULL)
+        current = current->left;
+
+    return current;
 }
 
 struct NO *removeSmaller(struct NO *node)
@@ -366,6 +364,9 @@ struct NO *removeSmaller(struct NO *node)
 
 struct NO* removeElementRb(struct NO* node, int valor)
 {
+    if (node == NULL)
+        return NULL;
+
     if (valor < node->info)
     {
         if (getColor(node->left) == BLACK && getColor(node->left->left) == BLACK)
@@ -378,7 +379,7 @@ struct NO* removeElementRb(struct NO* node, int valor)
         if (getColor(node->left) == RED)
             node = rotateRightRb(node);
 
-        if (valor == node->info && (node->left == NULL))
+        if (valor == node->info && node->left == NULL && node->right == NULL)
         {
             free(node);
             return NULL;
@@ -391,7 +392,7 @@ struct NO* removeElementRb(struct NO* node, int valor)
         {
             struct NO *x = searchSmaller(node->right);
             node->info = x->info;
-            node->right = removeSmaller(node->right);
+            node->right = removeElementRb(node->right, x->info); // Remover o valor x->info em vez de valor
         }
         else
             node->right = removeElementRb(node->right, valor);
