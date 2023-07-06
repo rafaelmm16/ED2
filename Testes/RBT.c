@@ -298,31 +298,8 @@ void trocarInfo(struct NO *root, int valorAntigo, int novoValor)
 
 // REMOCAOO
 // ************
-struct NO* dellBalanceNodes(struct NO* node)
+struct NO *dellBalanceNodes(struct NO *node)
 {
-    // O nó Vermelho sempre tem um filho à esquerda
-    if (node->left != NULL && getColor(node->left) == RED){
-        printf("Entrou na rotação a direita %d\n", node->info);
-        node = rotateRightRb(node);
-
-    }
-        
-    // O filho direito e o neto à direita são vermelhos
-    if (node->right != NULL && getColor(node->right) == RED && getColor(node->right->right) == RED){
-        printf("Entrou na rotação a esquerda %d\n", node->info);
-        node = rotateLeftRb(node);
-    }
-        
-
-    // Nó Vermelho com dois filhos Vermelhos: trocar as cores
-    if (node->left != NULL && node->right != NULL &&
-        getColor(node) == RED && getColor(node->left) == RED && getColor(node->right) == RED)
-    {
-        printf("troca de cores pai e filhos %d\n", node->info);
-        changeColor(node);
-        changeColor(node->left);
-        changeColor(node->right);
-    }
     if (node->left == NULL && node->right != NULL && getColor(node->right) == BLACK)
     {
         printf("trocou a cor a direita %d\n", node->info);
@@ -334,17 +311,34 @@ struct NO* dellBalanceNodes(struct NO* node)
         node->left->color = RED;
     }
 
-    // Caso especial para uma árvore com apenas três elementos onde todos são pretos
-    if (node->left != NULL && node->left->color == BLACK && node->right != NULL && node->right->color == BLACK)
+    // O nó Vermelho sempre tem um filho à esquerda
+    if (node->left != NULL && getColor(node->left) == RED)
     {
-        printf("Trocou as cores onde todes saõ pretes  %d\n", node->info);
-        node->color = RED;
+        //printf("Entrou na rotação a direita %d\n", node->info);
+        //node = rotateRightRb(node);
+        printf("ENTROU NESSE INFERNO\n");
         node->left->color = RED;
-        node->right->color = RED;
+    }
+
+    // O filho direito e o neto à direita são vermelhos
+    if (node->right != NULL && getColor(node->right) == RED && getColor(node->right->right) == RED)
+    {
+        printf("Entrou na rotação a esquerda %d\n", node->info);
+        node = rotateLeftRb(node);
+    }
+
+    // Nó Vermelho com dois filhos Vermelhos: trocar as cores
+    if (node->left != NULL && node->right != NULL &&
+        getColor(node) == RED && getColor(node->left) == RED && getColor(node->right) == RED)
+    {
+        printf("troca de cores pai e filhos %d\n", node->info);
+        changeColor(node);
+        changeColor(node->left);
+        changeColor(node->right);
     }
 
     return node;
-}  
+}
 
 struct NO *moveRedToLeft(struct NO *node)
 {
@@ -394,7 +388,7 @@ struct NO *removeSmaller(struct NO *node)
     return dellBalanceNodes(node);
 }
 
-struct NO* searchLargest(struct NO* node)
+struct NO *searchLargest(struct NO *node)
 {
     if (node == NULL)
         return NULL;
@@ -408,8 +402,6 @@ struct NO* searchLargest(struct NO* node)
 struct NO *removeElementRb(struct NO *node, int valor)
 {
     printf("Entrou na função removeElementRb\n");
-
-    
 
     if (valor < node->info)
     {
