@@ -1,3 +1,4 @@
+//ED2_TrabPratico_Grupo5_[IasminMarquesPereira][RafaelMendesMerlo].zip
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -16,9 +17,9 @@ RbTree *createRbTree();
 void freeRbTree(RbTree* root);
 int insertRb(RbTree *root, int valor, int qtd, const char *name, char **name_prod);
 int removeRb(RbTree  *root, int valor);
-int isEmpty(RbTree *root);
-int totalNodes(RbTree *root);
-int heightRb(RbTree *root);
+//int isEmpty(RbTree *root);
+//int totalNodes(RbTree *root);
+//int heightRb(RbTree *root);
 void prinTree(RbTree *root);
 void printTreeHelper(RbTree *node, int indentLevel);
 void imprimirString(struct NO* no);
@@ -28,3 +29,6 @@ void printProdCastrados(RbTree *root);
 void printProdCastradosHelper(RbTree *root, int indentLevel);
 void printProdEstoqueAux(RbTree *root);
 void printProdEstoque(RbTree *root, int indentLevel);
+struct NO *searchSmallest(struct NO *node);
+struct NO *searchLargest(struct NO *node);
+struct NO *dellBalanceNodes(struct NO *node);

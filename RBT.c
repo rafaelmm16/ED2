@@ -1,3 +1,4 @@
+//ED2_TrabPratico_Grupo5_[IasminMarquesPereira][RafaelMendesMerlo].zip,
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -67,18 +68,6 @@ int returnQuant (struct NO * raiz, int valor, int qnt){ //retorna a quantidade a
 
 // Rotações
 struct NO *rotateLeftRb(struct NO *root){ // Rotação a esquerda
-/*  struct NO* newRoot = root->right;
-    struct NO* newRootLeft = newRoot->left;
-    root->right = newRootLeft;
-    newRoot->left = root;
-    // Atualizar as cores corretamente
-    newRoot->color = root->color;
-    root->color = RED;
-    // Atualizar as cores dos filhos
-    if (newRootLeft) {
-        newRootLeft->color = BLACK;
-    }
-    return newRoot; */
 	struct NO *newRoot = root->right;
     struct NO *newRootLeft = newRoot != NULL ? newRoot->left : NULL;
 
@@ -114,23 +103,6 @@ struct NO* rotateRightRb(struct NO* root) {// Rotação a Direita
     }
 
     return newRoot;
-
-/*  struct NO* newRoot = root->left;
-    struct NO* newRootRight = newRoot->right;
-
-    root->left = newRootRight;
-    newRoot->right = root;
-
-    // Atualizar as cores corretamente
-    newRoot->color = root->color;
-    root->color = RED;
-
-    // Atualizar as cores dos filhos
-    if (newRootRight) {
-        newRootRight->color = BLACK;
-    }
-
-    return newRoot; */
 }
 
 // Informações do No
@@ -318,7 +290,7 @@ void changeInfo(struct NO *root, int valorAntigo, int novoValor){ //muda a quant
 
 
 // Remoção
-struct NO *balanceNodes(struct NO *node){
+/* struct NO *balanceNodes(struct NO *node){
 	
 	if (getColor(node->right) == RED) // no Vermelho sempre filho a esquerda
 		node = rotateLeftRb(node);
@@ -336,18 +308,46 @@ struct NO *balanceNodes(struct NO *node){
 
 	return node;
 }
+ */
+
+struct NO *dellBalanceNodes(struct NO *node){
+    if (node->left == NULL && node->right != NULL && getColor(node->right) == BLACK){
+        //printf("trocou a cor a direita %d\n", node->info);
+        node->right->color = RED;
+    }if (node->right == NULL && node->left != NULL && getColor(node->left) == BLACK){
+        //printf("trocou a cor a esquerda %d\n", node->info);
+        node->left->color = RED;
+    }
+
+    // O nó Vermelho sempre tem um filho à esquerda
+    if (node->left != NULL && getColor(node->left) == RED){
+        //printf("Entrou na rotação a direita %d\n", node->info);
+        //node = rotateRightRb(node);
+        //printf("ENTROU NESSE INFERNO\n");
+        node->left->color = RED;
+    }
+
+    // O filho direito e o neto à direita são vermelhos
+    if (node->right != NULL && getColor(node->right) == RED && getColor(node->right->right) == RED){
+       // printf("Entrou na rotação a esquerda %d\n", node->info);
+        node = rotateLeftRb(node);
+    }
+
+    // Nó Vermelho com dois filhos Vermelhos: trocar as cores
+    if (node->left != NULL && node->right != NULL && getColor(node) == RED && getColor(node->left) == RED && getColor(node->right) == RED){
+        //printf("troca de cores pai e filhos %d\n", node->info);
+        changeColor(node);
+        changeColor(node->left);
+        changeColor(node->right);
+    }
+
+    return node;
+}
+
 
 struct NO *moveRedToLeft(struct NO *node){
-	/* changeColor(node);
-	if (getColor(node->right->left) == RED){
-		node->right = rotateRightRb(node->right);
-		node = rotateLeftRb(node);
-		changeColor(node);
-	}
-	return node; */
 	changeColor(node);
-    if (node->right != NULL && getColor(node->right->left) == RED)
-    {
+    if (node->right != NULL && getColor(node->right->left) == RED){
         node->right = rotateRightRb(node->right);
         node = rotateLeftRb(node);
         changeColor(node);
@@ -357,12 +357,6 @@ struct NO *moveRedToLeft(struct NO *node){
 }
 
 struct NO *moveRedToRight(struct NO *node){
-	/* changeColor(node);
-	if (getColor(node->left->left) == RED){
-		node = rotateRightRb(node);
-		changeColor(node);
-	}
-	return node; */
 	changeColor(node);
     if (node->left != NULL && getColor(node->left->left) == RED){
         node = rotateRightRb(node);
@@ -371,7 +365,7 @@ struct NO *moveRedToRight(struct NO *node){
     return node;
 }
 
-struct NO *removeSmaller(struct NO *node){
+/* struct NO *removeSmaller(struct NO *node){
 	if (node->left == NULL){
 		free(node);
 		return NULL;
@@ -381,9 +375,9 @@ struct NO *removeSmaller(struct NO *node){
 
 	node->left = removeSmaller(node->left);
 	return balanceNodes(node);
-}
+} */
 
-struct NO *searchSmaller(struct NO *atual){
+/* struct NO *searchSmaller(struct NO *atual){
 	struct NO *no1 = atual;
 	struct NO *no2 = atual->left;
 	while (no2 != NULL){
@@ -391,113 +385,96 @@ struct NO *searchSmaller(struct NO *atual){
 		no2 = no2->left;
 	}
 	return no1;
+} */
+
+struct NO *searchSmallest(struct NO *node){
+    if (node == NULL)
+        return NULL;
+
+    if (node->left == NULL)
+        return node;
+
+    return searchSmallest(node->left);
 }
 
-struct NO *removeElementRb(struct NO *root, int valor){
-	/* if (valor < node->info){
-		if (getColor(node->left) == BLACK && getColor(node->left->left) == BLACK)
-			node = moveRedToLeft(node);
+struct NO *searchLargest(struct NO *node){
+    if (node == NULL)
+        return NULL;
 
-		node->left = removeElementRb(node->left, valor);
-	}else{
-		if (getColor(node->left) == RED)
-			node = rotateRightRb(node);
+    if (node->right == NULL)
+        return node;
 
-		if (valor == node->info && (node->left == NULL)){
-			free(node);
-			return NULL;
-		}
+    return searchLargest(node->right);
+}
 
-		if (getColor(node->right) == BLACK && getColor(node->right->left) == BLACK)
-			node = moveRedToRight(node);
 
-		if (valor == node->info){
-			struct NO *x = searchSmaller(node->right);
-			node->info = x->info;
-			node->right = removeSmaller(node->right);
-		}else
-			node->right = removeElementRb(node->right, valor);
-	}
-	return balanceNodes(node); */
-	if (root == NULL){
-        printf("Removi.\n");
+
+struct NO *removeElementRb(struct NO *node, int valor){
+    //printf("Entrou na função removeElementRb\n");
+
+    if (valor < node->info){
+        //printf("O valor %d é menor do que o valor do nó atual\n", valor);
+
+        if (getColor(node->left) == BLACK && getColor(node->left->left) == BLACK)
+            node = moveRedToLeft(node);
+
+        node->left = removeElementRb(node->left, valor);
+    }else if (valor > node->info){
+       // printf("O valor %d é maior do que o valor do nó atual\n", valor);
+
+        if (getColor(node->left) == RED)
+            node = rotateRightRb(node);
+
+        if (getColor(node->right) == BLACK && getColor(node->right->left) == BLACK)
+            node = moveRedToRight(node);
+
+        node->right = removeElementRb(node->right, valor);
+    }else {// valor == node->info
+        //printf("O valor %d é igual ao valor do nó atual\n", valor);
+
+        if (valor == node->info && node->left == NULL && node->right == NULL) {// Verifica se é uma folha
+            //printf("O nó atual é uma folha, removendo o nó\n");
+            free(node);
+            return NULL;
+        }
+
+        if (node->right != NULL && getColor(node->right) == BLACK && node->right->left != NULL && getColor(node->right->left) == BLACK)
+            node = moveRedToRight(node);
+
+        if (valor == node->info){
+            //printf("Substituindo o valor %d do nó atual pelo maior elemento da subárvore esquerda\n", valor);
+            if (node->left != NULL)
+            {
+                struct NO *x = searchLargest(node->left);
+                node->info = x->info;
+                node->left = removeElementRb(node->left, x->info);
+            }else if (node->right != NULL){
+               // printf("O nó atual não tem filho esquerdo, substituindo o valor %d pelo menor elemento da subárvore direita\n", valor);
+
+                struct NO *x = searchSmallest(node->right);
+                node->info = x->info;
+                node->right = removeElementRb(node->right, x->info);
+            }else{
+                //printf("O nó atual não tem filhos, removendo o nó\n");
+
+                free(node);
+                return NULL;
+            }
+        }
+    }
+
+    if (node == NULL){ // Verifica se o nó atual é NULL
+        //printf("O nó atual é NULL\n");
         return NULL;
     }
 
+   // printf("Executando dellBalanceNodes para ajustar o balanceamento do nó\n");
 
-    if (valor < root->info)
-    {
-        if (root->left != NULL && getColor(root->left) == BLACK && root->left->left != NULL && getColor(root->left->left) == BLACK)
-        {
-            printf("Movendo vermelho para a esquerda.\n");
-            root = moveRedToLeft(root);
-        }
+    node = dellBalanceNodes(node); // Ajusta o balanceamento do nó após a remoção
 
-        printf("Descendo para a subárvore esquerda.\n");
-        root->left = removeElementRb(root->left, valor);
-    }
-    else if (valor > root->info)
-    {
-        if (root->left != NULL && getColor(root->left) == RED)
-        {
-            printf("Rotacionando à direita.\n");
-            root = rotateRightRb(root);
-        }
-
-        if (root->right != NULL && getColor(root->right) == BLACK && root->right->left != NULL && getColor(root->right->left) == BLACK)
-        {
-            printf("Movendo vermelho para a direita.\n");
-            root = moveRedToRight(root);
-        }
-
-        printf("Descendo para a subárvore direita.\n");
-        root->right = removeElementRb(root->right, valor);
-    }
-    else // Caso em que o valor é igual ao valor do nó atual
-    {
-        if (root != NULL && root->left == NULL && root->right == NULL) // Nó folha
-        {
-            printf("Removendo nó folha.\n");
-            free(root);
-            return NULL; // Retorna NULL para indicar que a árvore está vazia
-        }
-        else if (root->left == NULL) // Nó com apenas filho à direita
-        {
-            printf("Removendo nó com apenas filho à direita.\n");
-            struct NO *temp = root->right;
-            free(root);
-            return temp; // Retorna o filho à direita como nova raiz
-        }
-        else if (root->right == NULL) // Nó com apenas filho à esquerda
-        {
-            printf("Removendo nó com apenas filho à esquerda.\n");
-            struct NO *temp = root->left;
-            free(root);
-            return temp; // Retorna o filho à esquerda como nova raiz
-        }
-        else // Nó com dois filhos
-        {
-            printf("Removendo nó com dois filhos.\n");
-            struct NO *minValueNode = searchSmaller(root->right); // Encontra o menor valor na subárvore direita
-            root->info = minValueNode->info;                    // Copia o valor do menor nó para o nó atual
-            root->right = removeElementRb(root->right, minValueNode->info); // Remove o menor nó recursivamente da subárvore direita
-        }
-    }
-
-    if (root->left != NULL && getColor(root->left) == RED && root->left->left != NULL && getColor(root->left->left) == RED)
-    {
-        printf("Rotacionando à direita.\n");
-        root = rotateRightRb(root);
-    }
-
-    if (root->right != NULL && getColor(root->right) == RED && root->right->right != NULL && getColor(root->right->right) == RED)
-    {
-        printf("Rotacionando à esquerda.\n");
-        root = rotateLeftRb(root);
-    }
-
-    return root;
+    return node;
 }
+
 
 int removeRb(RbTree *root, int valor){
 	/* if (searchElement(*root, valor)){
@@ -509,17 +486,17 @@ int removeRb(RbTree *root, int valor){
 	}else
 		return 0; */
 
-	printf("Chamando searchElement\n"); // Verifica se a função é chamada
+	//printf("Chamando searchElement\n"); // Verifica se a função é chamada
     if (searchElement(*root, valor)){
-        printf("Entrou no if\n"); // Verifica se entra no if
+        //printf("Entrou no if\n"); // Verifica se entra no if
         *root = removeElementRb(*root, valor); // Atualiza o ponteiro raiz após a remoção
-        printf("\n\nEntrou.\n");
+       // printf("\n\nEntrou.\n");
         if (*root != NULL)
             (*root)->color = BLACK; // Define a cor da nova raiz como preta
         return 1;
     }
     else{
-        printf("Entrou no else\n"); // Verifica se entra no else
+       // printf("Entrou no else\n"); // Verifica se entra no else
         return 0;
     }
 }
@@ -561,7 +538,6 @@ int removeRb(RbTree *root, int valor){
 void prinTree(RbTree *root){ //auxiliar da impressao da arvore rubro negra
 	
 	if (root == NULL){
-        //
         printf("Árvore vazia.\n");
         return;
     }
@@ -569,15 +545,7 @@ void prinTree(RbTree *root){ //auxiliar da impressao da arvore rubro negra
 }
 
 void printTreeHelper(RbTree *root, int indentLevel){ //impressao arvore rubro negra
-/* 	if (*root != NULL){
-		printTreeHelper(&((*root)->right), indentLevel + 1);
 
-		for (int i = 0; i < indentLevel; i++)
-			printf("    ");
-
-		printf("%d (%d)\n", (*root)->info, (*root)->color);
-		printTreeHelper(&((*root)->left), indentLevel + 1);
-	} */
 	if (root == NULL){
         // Árvore vazia, não há nada para imprimir
         printf("Árvore vazia.\n");
@@ -588,14 +556,14 @@ void printTreeHelper(RbTree *root, int indentLevel){ //impressao arvore rubro ne
     }
     
     RbTree currentNode = *root;
-    PrintTreeHelper(&(currentNode->right), indentLevel + 1);
+    printTreeHelper(&(currentNode->right), indentLevel + 1);
     for (int i = 0; i < indentLevel; i++){
         printf("    ");
     }
     if (currentNode != NULL){
         printf("%d - %d\n", currentNode->info, getColor(currentNode)); // Acessar cor do nó por getColor(currentNode)
         
-        PrintTreeHelper(&(currentNode->left), indentLevel + 1);
+        printTreeHelper(&(currentNode->left), indentLevel + 1);
     }
 }
 
