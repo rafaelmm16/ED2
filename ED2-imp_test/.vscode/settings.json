@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "type_traits": "c",
-        "stdio.h": "c",
-        "stdlib.h": "c"
-    },
-    "cmake.configureOnOpen": false,
-    "C_Cpp.errorSquiggles": "disabled"
-}

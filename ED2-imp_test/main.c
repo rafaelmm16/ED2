@@ -1,3 +1,4 @@
+//ED2_TrabPratico_Grupo5_[IasminMarquesPereira][RafaelMendesMerlo].zip,
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -41,7 +42,6 @@ int main()
                 fflush(stdin);
                 printf("Digite o nome do produto (sem espaços): ");
                 scanf(" %99[^\n]", name);
-                //printf("%s", name);
                 printf("Digite a qtd do produto: ");
                 scanf("%d", &qtd);
                 if(item<0){
@@ -50,10 +50,8 @@ int main()
                     item = insertRb(root, item, qtd, name, &name_prod);      
                     printf("\n");
                     printProd(root);
-                }
-                
-            }
-            
+                }        
+            } 
             break;
         case 2: //[verificar]
             printf("Digite o produto a ser removido: ");
@@ -75,25 +73,21 @@ int main()
                     changeInfo(*root, item_dois, novo);
                     printProd(root);
                 }
-
             }else 
                 printf("O produto não existe!\n");
-            
             break;  
         case 4: //[ok];
-            printf("\n");
+            printf("\n --- Produtos Cadastrados --- \n");
             printProdCastrados(root);
-
             break;      
         case 5://[ok]
-            printf("\n Produtos Disponiveis no Estoque Atualmente \n");
+            printf("\n --- Produtos Disponiveis no Estoque Atualmente --- \n");
             printProdEstoqueAux(root);
             break;
         case 6: //[ok]
             prinTree(root);
             break;
-        
-        case 0:
+        case 0://[ok]
             printf("Encerrando...\n");
             break;
         default:
