@@ -298,23 +298,27 @@ void trocarInfo(struct NO *root, int valorAntigo, int novoValor)
 
 // REMOCAOO
 // ************
-struct NO *dellBalanceNodes(struct NO *node)
+struct NO* dellBalanceNodes(struct NO* node)
 {
     // O nó Vermelho sempre tem um filho à esquerda
-    if (getColor(node->right) == RED)
+    if (node->left != NULL && getColor(node->left) == RED)
+        node = rotateRightRb(node);
+
+    // O filho direito e o neto à direita são vermelhos
+    if (node->right != NULL && getColor(node->right) == RED && getColor(node->right->right) == RED)
         node = rotateLeftRb(node);
 
-    // O filho direito e o neto à esquerda são vermelhos
-    if (node->left != NULL && getColor(node->left) == RED && getColor(node->left->left) == RED)
-		node = rotateRightRb(node);
-
-    // 2 filhos Vermelhos: troca cor!
-    if (node->left != NULL && node->right != NULL && getColor(node->left) == RED && getColor(node->right) == RED)
+    // Nó Vermelho com dois filhos Vermelhos: trocar as cores
+    if (node->left != NULL && node->right != NULL &&
+        getColor(node) == RED && getColor(node->left) == RED && getColor(node->right) == RED)
+    {
         changeColor(node);
+        changeColor(node->left);
+        changeColor(node->right);
+    }
 
     return node;
 }
-
 struct NO *moveRedToLeft(struct NO *node)
 {
     changeColor(node);
@@ -338,16 +342,15 @@ struct NO *moveRedToRight(struct NO *node)
     return node;
 }
 
-struct NO *searchSmaller(struct NO *atual)
+struct NO* searchSmallest(struct NO* node)
 {
-    struct NO *no1 = atual;
-    struct NO *no2 = atual->left;
-    while (no2 != NULL)
-    {
-        no1 = no2;
-        no2 = no2->left;
-    }
-    return no1;
+    if (node == NULL)
+        return NULL;
+
+    if (node->left == NULL)
+        return node;
+
+    return searchSmallest(node->left);
 }
 
 struct NO *removeSmaller(struct NO *node)
@@ -406,26 +409,25 @@ struct NO* removeElementRb(struct NO* node, int valor)
 
         if (valor == node->info)
         {
-            printf("Substituindo o valor do nó atual pelo menor elemento da subárvore direita\n");
-
-            if (node->right != NULL)
+            printf("Substituindo o valor %d do nó atual pelo menor elemento da subárvore esquerda\n", valor);
+            if (node->left != NULL)
             {
-                struct NO *x = searchSmaller(node->right);
-                node->info = x->info;
-                node->right = removeElementRb(node->right, x->info);
-            }
-            else if (node->left != NULL)
-            {
-                printf("O nó atual não tem filho direito, substituindo pelo menor elemento da subárvore esquerda\n");
-                
-                struct NO *x = searchSmaller(node->left);
+                struct NO *x = searchSmallest(node->left);
                 node->info = x->info;
                 node->left = removeElementRb(node->left, x->info);
+            }
+            else if (node->right != NULL)
+            {
+                printf("O nó atual não tem filho esquerdo, substituindo o valor %d pelo menor elemento da subárvore direita\n", valor);
+
+                struct NO *x = searchSmallest(node->right);
+                node->info = x->info;
+                node->right = removeElementRb(node->right, x->info);
             }
             else
             {
                 printf("O nó atual não tem filhos, removendo o nó\n");
-                
+
                 free(node);
                 return NULL;
             }
