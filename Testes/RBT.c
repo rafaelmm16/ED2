@@ -301,24 +301,51 @@ void trocarInfo(struct NO *root, int valorAntigo, int novoValor)
 struct NO* dellBalanceNodes(struct NO* node)
 {
     // O nó Vermelho sempre tem um filho à esquerda
-    if (node->left != NULL && getColor(node->left) == RED)
+    if (node->left != NULL && getColor(node->left) == RED){
+        printf("Entrou na rotação a direita %d\n", node->info);
         node = rotateRightRb(node);
 
+    }
+        
     // O filho direito e o neto à direita são vermelhos
-    if (node->right != NULL && getColor(node->right) == RED && getColor(node->right->right) == RED)
+    if (node->right != NULL && getColor(node->right) == RED && getColor(node->right->right) == RED){
+        printf("Entrou na rotação a esquerda %d\n", node->info);
         node = rotateLeftRb(node);
+    }
+        
 
     // Nó Vermelho com dois filhos Vermelhos: trocar as cores
     if (node->left != NULL && node->right != NULL &&
         getColor(node) == RED && getColor(node->left) == RED && getColor(node->right) == RED)
     {
+        printf("troca de cores pai e filhos %d\n", node->info);
         changeColor(node);
         changeColor(node->left);
         changeColor(node->right);
     }
+    if (node->left == NULL && node->right != NULL && getColor(node->right) == BLACK)
+    {
+        printf("trocou a cor a direita %d\n", node->info);
+        node->right->color = RED;
+    }
+    if (node->right == NULL && node->left != NULL && getColor(node->left) == BLACK)
+    {
+        printf("trocou a cor a esquerda %d\n", node->info);
+        node->left->color = RED;
+    }
+
+    // Caso especial para uma árvore com apenas três elementos onde todos são pretos
+    if (node->left != NULL && node->left->color == BLACK && node->right != NULL && node->right->color == BLACK)
+    {
+        printf("Trocou as cores onde todes saõ pretes  %d\n", node->info);
+        node->color = RED;
+        node->left->color = RED;
+        node->right->color = RED;
+    }
 
     return node;
-}
+}  
+
 struct NO *moveRedToLeft(struct NO *node)
 {
     changeColor(node);
@@ -342,7 +369,7 @@ struct NO *moveRedToRight(struct NO *node)
     return node;
 }
 
-struct NO* searchSmallest(struct NO* node)
+struct NO *searchSmallest(struct NO *node)
 {
     if (node == NULL)
         return NULL;
@@ -355,21 +382,34 @@ struct NO* searchSmallest(struct NO* node)
 
 struct NO *removeSmaller(struct NO *node)
 {
-	if (node->left == NULL)
-	{
-		free(node);
-		return NULL;
-	}
-	if (getColor(node->left) == BLACK && getColor(node->left->left) == BLACK)
-		node = moveRedToLeft(node);
+    if (node->left == NULL)
+    {
+        free(node);
+        return NULL;
+    }
+    if (getColor(node->left) == BLACK && getColor(node->left->left) == BLACK)
+        node = moveRedToLeft(node);
 
-	node->left = removeSmaller(node->left);
-	return dellBalanceNodes(node);
+    node->left = removeSmaller(node->left);
+    return dellBalanceNodes(node);
 }
 
-struct NO* removeElementRb(struct NO* node, int valor)
+struct NO* searchLargest(struct NO* node)
+{
+    if (node == NULL)
+        return NULL;
+
+    if (node->right == NULL)
+        return node;
+
+    return searchLargest(node->right);
+}
+
+struct NO *removeElementRb(struct NO *node, int valor)
 {
     printf("Entrou na função removeElementRb\n");
+
+    
 
     if (valor < node->info)
     {
@@ -404,15 +444,15 @@ struct NO* removeElementRb(struct NO* node, int valor)
             return NULL;
         }
 
-        if (getColor(node->right) == BLACK && getColor(node->right->left) == BLACK)
+        if (node->right != NULL && getColor(node->right) == BLACK && node->right->left != NULL && getColor(node->right->left) == BLACK)
             node = moveRedToRight(node);
 
         if (valor == node->info)
         {
-            printf("Substituindo o valor %d do nó atual pelo menor elemento da subárvore esquerda\n", valor);
+            printf("Substituindo o valor %d do nó atual pelo maior elemento da subárvore esquerda\n", valor);
             if (node->left != NULL)
             {
-                struct NO *x = searchSmallest(node->left);
+                struct NO *x = searchLargest(node->left);
                 node->info = x->info;
                 node->left = removeElementRb(node->left, x->info);
             }
@@ -442,17 +482,19 @@ struct NO* removeElementRb(struct NO* node, int valor)
 
     printf("Executando dellBalanceNodes para ajustar o balanceamento do nó\n");
 
-    return dellBalanceNodes(node); // Ajusta o balanceamento do nó após a remoção
+    node = dellBalanceNodes(node); // Ajusta o balanceamento do nó após a remoção
+
+    return node;
 }
 
 int removeRb(RbTree *root, int valor)
 {
-    //printf("Chamando searchElement\n"); // Verifica se a função é chamada
+    // printf("Chamando searchElement\n"); // Verifica se a função é chamada
     if (searchElement(*root, valor))
     {
-        //printf("Entrou no if\n");              // Verifica se entra no if
+        // printf("Entrou no if\n");              // Verifica se entra no if
         *root = removeElementRb(*root, valor); // Atualiza o ponteiro raiz após a remoção
-        //printf("Entrou.\n");
+        // printf("Entrou.\n");
         if (*root != NULL)
             (*root)->color = BLACK; // Define a cor da nova raiz como preta
         return 1;
