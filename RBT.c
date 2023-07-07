@@ -199,7 +199,7 @@ int insertRb(RbTree *root, int current, int qtd, const char *name, char **name_p
 		(*name_prod)[i] = name[i];
 		i++;
 	}
-	printf("%s", *name_prod);
+	//printf("%s", *name_prod);
 
 	*root = insertNodeRb(*root, current, qtd, *name_prod, &ans); // Faz o tratamento das possíveis violações da árvore rubro-negra
 
