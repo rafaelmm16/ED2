@@ -107,7 +107,6 @@ void changeColor(struct NO *node){ // Altera a cor de um nó e de seus filhos
 		node->right->color = !node->right->color;
 }
 
-
 struct NO *insertNodeRb(struct NO *root, int key, int qtd, const char *name, int *ans){ //função responsavel pela verificação de violações e inserção do no na arvore
 	if (!root){
 		struct NO *insert = (struct NO *)malloc(sizeof(struct NO));
@@ -128,14 +127,12 @@ struct NO *insertNodeRb(struct NO *root, int key, int qtd, const char *name, int
 		*ans = 0;
 		return NULL;
 	}
-	
 	if (key < root->info){ //Chave do produto menor do que a atual, desce para esquerda
 		root->left = insertNodeRb(root->left, key, qtd, name, ans);
 	}
 	else{  //Chave do produto maior do que a atual, desce para direita
 		root->right = insertNodeRb(root->right, key, qtd, name, ans);
 	}
-
 	// tratamento de casos de violação da inserção
 	if (*ans){ //checa o balanceamento da arvore
 		if (key < root->info){ //Chave do produto menor do que a atual, desce para esquerda
@@ -212,15 +209,13 @@ int insertRb(RbTree *root, int current, int qtd, const char *name, char **name_p
 	return ans;
 }
 
-
 void changeInfo(struct NO *root, int oldValue, int newValue){ // muda a quantidade do produto
 	struct NO *no = searchElement(root, oldValue);//verifica se o elemento existe
-	if (no == NULL){ // Nó não encontrado
+	if (no == NULL){ 
 		return;
 	}
 	no->qtd_prod = newValue;
 }
-
 
 struct NO *dellBalanceNodes(struct NO *node){ //ultima verificação de balanceamento apos a remoção
 	if (node->left == NULL && node->right != NULL && getColor(node->right) == BLACK){//trocou a cor direita
@@ -263,7 +258,6 @@ struct NO *moveRedToRight(struct NO *node){ //move o no vermelho para direita
 	return node;
 }
 
-
 struct NO *searchSmallest(struct NO *node){ //pesquisa o menor elemento (subarvore esquerda)
 	if (node == NULL)
 		return NULL;
@@ -285,29 +279,23 @@ struct NO *searchLargest(struct NO *node){ //pesquisa o maior elemento (subarvor
 }
 
 struct NO *removeElementRb(struct NO *node, int current){ //função que faz a exclusão do No e faz as verificações de violação da árvore
-
 	if (current < node->info){//O valor é menor do que o valor do nó atual
 		if (getColor(node->left) == BLACK && getColor(node->left->left) == BLACK)
 			node = moveRedToLeft(node);
-
 		node->left = removeElementRb(node->left, current);
 	}else if (current > node->info){ //O valor é maior do que o valor do nó atual
 		if (getColor(node->left) == RED)
 			node = rotateRightRb(node);
-
 		if (getColor(node->right) == BLACK && getColor(node->right->left) == BLACK)
 			node = moveRedToRight(node);
-
 		node->right = removeElementRb(node->right, current);
 	}else{ // valor == atual
 		if (current == node->info && node->left == NULL && node->right == NULL){ // Verifica se é uma folha, remove o no
 			free(node);
 			return NULL;
 		}
-
 		if (node->right != NULL && getColor(node->right) == BLACK && node->right->left != NULL && getColor(node->right->left) == BLACK)
 			node = moveRedToRight(node);
-
 		if (current == node->info){
 			if (node->left != NULL){ //Substituindo o valor do nó atual pelo maior elemento da subárvore esquerda
 				struct NO *x = searchLargest(node->left);
@@ -323,11 +311,9 @@ struct NO *removeElementRb(struct NO *node, int current){ //função que faz a e
 			}
 		}
 	}
-
 	if (node == NULL){ // Verifica se o nó atual é NULL
 		return NULL;
 	}
-
 	node = dellBalanceNodes(node); // Ajusta o balanceamento do nó após a remoção (função auxiliar de verificação de violações apos remoção)
 	return node;
 }
@@ -344,7 +330,6 @@ int removeRb(RbTree *root, int current){ //função auxiliar da remoção de ele
 	}
 }
 
-
 void prinTree(RbTree *root){ // auxiliar da impressao da arvore rubro negra
 	if (root == NULL){
 		printf("Árvore vazia.\n");
@@ -354,14 +339,12 @@ void prinTree(RbTree *root){ // auxiliar da impressao da arvore rubro negra
 }
 
 void printTreeHelper(RbTree *root, int indentLevel){ // impressao arvore rubro negra
-
 	if (root == NULL){
 		printf("Árvore vazia.\n");
 	}
 	if (*root == NULL){
 		return;
 	}
-
 	RbTree currentNode = *root;
 	printTreeHelper(&(currentNode->right), indentLevel + 1);
 	for (int i = 0; i < indentLevel; i++){
@@ -369,7 +352,6 @@ void printTreeHelper(RbTree *root, int indentLevel){ // impressao arvore rubro n
 	}
 	if (currentNode != NULL){
 		printf("%d - %d\n", currentNode->info, getColor(currentNode)); // Acessar cor do nó por getColor(currentNode)
-
 		printTreeHelper(&(currentNode->left), indentLevel + 1);
 	}
 }
@@ -389,13 +371,10 @@ void printProdHelper(RbTree *root, int indentLevel){ // impressao produto
 	if (*root == NULL){
 		return;
 	}
-	
 	if (*root != NULL){
 		printProdHelper(&((*root)->right), indentLevel + 1);
-
 		for (int i = 0; i < indentLevel; i++)
 			printf("    ");
-
 		printf("%d (%d) - [ %s: %d ] \n", (*root)->info, (*root)->color, (*root)->name_prod, (*root)->qtd_prod);
 		printProdHelper(&((*root)->left), indentLevel + 1);
 	}
@@ -416,7 +395,6 @@ void printProdEstoque(RbTree *root, int indentLevel){ // impressao produto em es
 	if (*root == NULL){
 		return;
 	}
-	
 	if (*root != NULL){
 		if ((*root)->qtd_prod != 0 && (*root)->qtd_prod > 0){
 			printf("%s : %d \n", (*root)->name_prod, (*root)->qtd_prod);
