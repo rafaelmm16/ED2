@@ -5,19 +5,18 @@
 
 #include "RBT.c"
 
-int main()
-{
-    int choice, novo;
-    int qtd=0;
-    int item =0;
-    char name[100];
-    char *name_prod = NULL;
-    RbTree *root = createRbTree();
-    int item_dois=0;
-    int quant_atual=0;
+int main(){
+    //variaveis de controle e armazenamento de informações para exibição
+    int choice, novo; //controle do menu
+    int qtd=0;//quantidade do produto
+    int item =0; // controle de codigo do item a ser inserido
+    char name[100]; // nome produto - string
+    char *name_prod = NULL; //controle nome do produto - string
+    RbTree *root = createRbTree();//arvore rubro negra
+    int item_dois=0; // controle - atualização de quantidade de produto
+    int quant_atual=0; // quantidade atual do produto
 
-    do
-    {
+    do{
         printf("\n --------------------------------------------- \n1. Cadastrar um novo produto\n");
         printf("2. Excluir um produto cadastrado\n");
         printf("3. Atualizar a quantidade de um produto no estoque\n");
@@ -28,9 +27,8 @@ int main()
         printf("\nEscolha uma opção: ");
         scanf("%d", &choice);
 
-        switch (choice)
-        {
-        case 1: //[ok]
+        switch (choice){
+        case 1: //inserir um produto
             item =0;
             printf("Digite o codigo produto a ser inserido: ");
             scanf("%d", &item);
@@ -53,25 +51,25 @@ int main()
                 }        
             } 
             break;
-        case 2: //[verificar]
+        case 2: //remover um produto
             printf("Digite o produto a ser removido: ");
             scanf("%d", &item);
-            if (searchElement(*root, item)){//produto existe 
-                removeRb(root, item);
-                prinTree(root);
+            if (searchElement(*root, item)){//se o produto existir: remove 
+                removeRb(root, item);//remove o produto
+                prinTree(root);//printa a arvore
             }else{ //produto nao existe
                 printf("Produto não Existe! \n");
             }
             break;
-        case 3: //[ok]
+        case 3: //atualizar quantidade do produto
             printf("Digite o codigo do produto a ser atualizado: ");
             scanf("%d", &item_dois);
-            if (searchElement(*root, item_dois)) { //item é o codigo do produto
+            if (searchElement(*root, item_dois)) { //verifica se o produto existe
                 quant_atual = returnQuant(*root,item_dois,quant_atual);
                 printf("\n> O produto %d existe! Quantidade Atual: %d \n", item_dois, quant_atual);
                 printf("\nInforme o novo valor da quantidade: ");
                 scanf("%d", &novo);
-                if(novo<0){
+                if(novo<0){ //se o valor da quantidade menor que zero, INVALIDO
                     printf("Numero inserido invalido;\n");                    
                 }else{
                     changeInfo(*root, item_dois, novo);
@@ -80,35 +78,35 @@ int main()
             }else 
                 printf("O produto não existe!\n");
             break;  
-        case 4: //[ok];
+        case 4: //Exibe os produtos cadastrados
 
-            if (*root == NULL){
+            if (*root == NULL){ // caso a árvore esteja vazia, não possui produtos cadastrados
                 printf("\n [Sem produtos Cadastrados] \n");
-            }else{
+            }else{ // se a arvore possuir produtos cadastrados
                 printf("\n --- Produtos Cadastrados --- \n");
                 printProdCastrados(root);
             }
 
             break;      
-        case 5://[ok]
-            if (*root == NULL){
-                printf("\n [Sem produtos Cadastrados] \n");
-            }else{
+        case 5://Exibe os produtos disponiveis em estoque
+            if (*root == NULL){ // caso a árvore esteja vazia, não possui produtos cadastrados
+                printf("\n [Sem produtos Cadastrados] \n"); 
+            }else{ //caso não possua produtos: não tera informações, se possuir disponivel em estoque: exibira 
                 printf("\n --- Produtos Disponiveis no Estoque Atualmente --- \n");
                 printProdEstoqueAux(root);  
             }            
             break;
-        case 6: //[ok]
-            if (*root == NULL){
+        case 6: //impressao da arvore
+            if (*root == NULL){  // caso a árvore esteja vazia
                 printf("\n [Árvore Vazia] \n");
-            }else{
+            }else{//exibe os elementos cadastrados na arvore
                 prinTree(root);
             } 
             break;
-        case 0://[ok]
+        case 0://encerra o programa
             printf("Encerrando...\n");
             break;
-        default:
+        default: //lida com as opções invalidas
             printf("Opção inválida! Tente novamente.\n");
         }
         printf("\n");
