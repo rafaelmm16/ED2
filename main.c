@@ -1,4 +1,4 @@
-//ED2_TrabPratico_Grupo5_[IasminMarquesPereira][RafaelMendesMerlo].zip,
+// ED2_TrabPratico_Grupo5_[IasminMarquesPereira][RafaelMendesMerlo]
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,8 +56,12 @@ int main()
         case 2: //[verificar]
             printf("Digite o produto a ser removido: ");
             scanf("%d", &item);
-            removeRb(root, item);
-            prinTree(root);
+            if (searchElement(*root, item)){//produto existe 
+                removeRb(root, item);
+                prinTree(root);
+            }else{ //produto nao existe
+                printf("Produto não Existe! \n");
+            }
             break;
         case 3: //[ok]
             printf("Digite o codigo do produto a ser atualizado: ");
@@ -77,15 +81,29 @@ int main()
                 printf("O produto não existe!\n");
             break;  
         case 4: //[ok];
-            printf("\n --- Produtos Cadastrados --- \n");
-            printProdCastrados(root);
+
+            if (*root == NULL){
+                printf("\n [Sem produtos Cadastrados] \n");
+            }else{
+                printf("\n --- Produtos Cadastrados --- \n");
+                printProdCastrados(root);
+            }
+
             break;      
         case 5://[ok]
-            printf("\n --- Produtos Disponiveis no Estoque Atualmente --- \n");
-            printProdEstoqueAux(root);
+            if (*root == NULL){
+                printf("\n [Sem produtos Cadastrados] \n");
+            }else{
+                printf("\n --- Produtos Disponiveis no Estoque Atualmente --- \n");
+                printProdEstoqueAux(root);  
+            }            
             break;
         case 6: //[ok]
-            prinTree(root);
+            if (*root == NULL){
+                printf("\n [Árvore Vazia] \n");
+            }else{
+                prinTree(root);
+            } 
             break;
         case 0://[ok]
             printf("Encerrando...\n");
