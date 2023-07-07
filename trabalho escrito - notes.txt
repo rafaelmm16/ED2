@@ -1,0 +1,128 @@
+* Inserção
+
+Duas funções principais:
+- insertNodeRb
+- insertRb
+
+Auxiliares:
+- getColor
+- rotateRightRb
+- rotateLeftRb
+
+
+* Exclusão
+Duas principais
+- removeElementRb
+- removeRb
+
+
+Auxiliares:
+- searchElement
+- getColor
+- moveRedToLeft
+- rotateRightRb
+- rotateLeftRb
+- moveRedToRight
+- searchLargest
+- dellBalanceNodes
+
+
+* Auxiliares no Geral
+
+createRbTree
+freeNode
+freeRbTree
+searchElement
+returnQuant
+getColor
+changeColor
+changeInfo
+
+
+* Impressão
+printTree
+printTreeHelper
+printProd
+printProdHelper
+printProdEstoqueAux
+printProdEstoque
+printProdCastrados
+printProdCastradosHelper
+
+--
+
+
+
+
+	O programa deverá ser implementado em Linguagem C e totalmente comentado. 
+	O relatório deverá conter a explicação detalhada do programa (forma de compilação do programa, 
+estruturas, funções, formatos de entrada e saída de dados). 
+	O programa deverá ter as operações de cadastro de novo produto, exclusão de um produto cadastrado,
+atualização da quantidade de um produto no estoque, listar todos os produtos cadastrados, listar todos os
+ produtos disponíveis no estoque e por fim a impressão da árvore Rubro-Negra.
+	A entrega da implementação e do relatório é obrigatória. A falta de qualquer uma dessas partes leva
+ à anulação do trabalho (nota zero). 
+	A estrutura de um nó da árvore não pode ter ponteiro para o nó pai (e nem para nenhum ancestral na árvore
+
+
+- pagina 4
+1. Justificativa
+2. Objetivos
+3. Introdução
+
+-pagina 5
+4. Metodologia
+4.1 Implementação da Árvore Rubro Negra
+
+-pagina 6
+4.1.1 Inserção
+
+-pagina 9
+4.1.2 Exclusão 
+
+- pagina 14
+4.1.3 Funções Auxiliares (geral)
+
+- pagina 15
+4.1.4 Funções de Impressão
+
+- pagina 17
+4.2 Arquivos
+4.2.1 Rbt.h
+
+- pagina 18
+4.2.2 Main.c
+
+
+- pagina 19
+4.2.3 RBT.c
+5. Resultados e Discussão
+
+- pagina 20
+5.1 Exemplo 1 – Inserção Invalida
+5.2 Exemplo 2 – Não há elementos na árvore
+5.3 Exemplo 3 - Código digitado do produto invalido/ inexistente
+5.4 Exemplo 4 – Inserção válida
+
+- pagina 21
+5.5 Exemplo 5 – Impressão produtos e produtos em estoque
+5.6 Exemplo 6 - Alterar quantidade de um produto
+5.7 Exemplo 7 – Excluir produto
+5.8 Exemplo 8 – Excluir produto (com mais de três produtos cadastrados)
+
+- pagina 22
+5.9 Exemplo 9 – Impressão de arvore rubro negra
+6. Conclusão
+7. Referências Bibliográficas
+
+
+
+
+
+
+
+
+
+
+
+
